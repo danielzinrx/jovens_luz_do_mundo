@@ -220,6 +220,7 @@ O projeto pode ser instalado como aplicativo no celular sem precisar da App Stor
 - [ ] Galeria de fotos dos encontros
 - [ ] Transmissão ao vivo de missas e encontros
 - [ ] App nativo (React Native)
+- [ ] Inserção de um ParocoIA
 
 ---
 
