@@ -1,0 +1,601 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Santos — Jovens Luz do Mundo</title>
+    <link rel="stylesheet" href="../css/style.css" />
+    <link rel="icon" type="image/svg+xml" href="../img/gemini-svg.svg" />
+    <style>
+        /* ===== CARD SANTO DO DIA ===== */
+        .santo-dia-card {
+            margin: 16px 16px 0;
+            background: linear-gradient(135deg, var(--azul-royal-escuro), var(--azul-royal));
+            border-radius: var(--raio);
+            padding: 22px 20px;
+            position: relative;
+            overflow: hidden;
+            min-height: 110px;
+        }
+
+        .santo-dia-card::before {
+            content: '✝';
+            position: absolute;
+            right: 16px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 70px;
+            color: rgba(201, 168, 76, 0.15);
+        }
+
+        .santo-dia-label {
+            font-size: 10px;
+            font-weight: 700;
+            letter-spacing: 0.14em;
+            color: var(--dourado-claro);
+            text-transform: uppercase;
+            margin-bottom: 10px;
+        }
+
+        .santo-dia-nome {
+            font-family: var(--fonte-titulo);
+            font-size: 20px;
+            font-weight: 700;
+            color: #fff;
+            margin-bottom: 4px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .santo-dia-sub {
+            font-size: 13px;
+            color: rgba(255, 255, 255, 0.72);
+            position: relative;
+            z-index: 1;
+        }
+
+        .santo-dia-btn {
+            margin-top: 14px;
+            background: rgba(201, 168, 76, 0.20);
+            border: 1px solid rgba(201, 168, 76, 0.45);
+            border-radius: 20px;
+            padding: 6px 16px;
+            color: var(--dourado-claro);
+            font-family: var(--fonte-titulo);
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transicao);
+            letter-spacing: 0.05em;
+            display: inline-block;
+            position: relative;
+            z-index: 1;
+        }
+
+        .santo-dia-btn:hover {
+            background: rgba(201, 168, 76, 0.35);
+        }
+
+        /* ===== LOADING ===== */
+        @keyframes pulse {
+
+            0%,
+            100% {
+                opacity: .3
+            }
+
+            50% {
+                opacity: .75
+            }
+        }
+
+        .lp {
+            border-radius: 6px;
+            animation: pulse 1.4s ease-in-out infinite;
+        }
+
+        .lp-white {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .lp-gray {
+            background: rgba(27, 79, 155, 0.10);
+        }
+
+        /* ===== LISTA DE SANTOS CONHECIDOS ===== */
+        .santos-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+            padding: 0 16px;
+        }
+
+        .santo-card-mini {
+            background: var(--branco-puro);
+            border-radius: var(--raio-sm);
+            padding: 14px 12px;
+            box-shadow: var(--sombra);
+            cursor: pointer;
+            transition: var(--transicao);
+            border: 1.5px solid transparent;
+        }
+
+        .santo-card-mini:hover {
+            border-color: var(--dourado-claro);
+            transform: translateY(-2px);
+        }
+
+        .santo-card-mini .s-icone {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: rgba(27, 79, 155, 0.08);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 8px;
+            font-size: 16px;
+        }
+
+        .santo-card-mini h4 {
+            font-family: var(--fonte-titulo);
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--texto-escuro);
+            margin-bottom: 2px;
+            line-height: 1.3;
+        }
+
+        .santo-card-mini span {
+            font-size: 11px;
+            color: var(--cinza-texto);
+        }
+
+        /* ===== OVERLAY BIOGRAFIA ===== */
+        .bio-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: var(--branco-gelo);
+            z-index: 200;
+            flex-direction: column;
+        }
+
+        .bio-overlay.aberto {
+            display: flex;
+        }
+
+        .bio-topo {
+            background: linear-gradient(135deg, var(--azul-royal-escuro), var(--azul-royal));
+            padding: 16px 16px 24px;
+            flex-shrink: 0;
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+        }
+
+        .bio-fechar {
+            background: rgba(255, 255, 255, 0.15);
+            border: none;
+            border-radius: 10px;
+            width: 36px;
+            height: 36px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            flex-shrink: 0;
+        }
+
+        .bio-topo-info h3 {
+            font-family: var(--fonte-titulo);
+            font-size: 20px;
+            font-weight: 700;
+            color: #fff;
+            margin-bottom: 4px;
+        }
+
+        .bio-topo-info p {
+            font-size: 13px;
+            color: var(--dourado-claro);
+        }
+
+        .bio-corpo {
+            flex: 1;
+            overflow-y: auto;
+            padding: 20px 16px 40px;
+        }
+
+        .bio-secao {
+            background: var(--branco-puro);
+            border-radius: var(--raio-sm);
+            padding: 16px;
+            margin-bottom: 12px;
+            box-shadow: var(--sombra);
+        }
+
+        .bio-secao-titulo {
+            font-family: var(--fonte-titulo);
+            font-size: 12px;
+            font-weight: 700;
+            letter-spacing: 0.08em;
+            color: var(--dourado-escuro);
+            text-transform: uppercase;
+            margin-bottom: 8px;
+        }
+
+        .bio-secao p {
+            font-size: 14px;
+            line-height: 1.8;
+            color: var(--texto-escuro);
+        }
+
+        .bio-tag {
+            display: inline-block;
+            background: rgba(27, 79, 155, 0.08);
+            color: var(--azul-royal);
+            font-size: 11px;
+            font-weight: 700;
+            padding: 3px 10px;
+            border-radius: 20px;
+            margin: 2px;
+            font-family: var(--fonte-titulo);
+            letter-spacing: 0.04em;
+        }
+    </style>
+</head>
+
+<body>
+
+    <header class="page-header">
+        <a href="../index.html" class="voltar">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5"
+                stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="15 18 9 12 15 6" />
+            </svg>
+        </a>
+        <h2>Santos Católicos</h2>
+    </header>
+
+    <!-- SANTO DO DIA (via API) -->
+    <div class="santo-dia-card" id="card-santo-dia">
+        <div class="santo-dia-label">✦ Santo de Hoje</div>
+        <div class="lp lp-white" style="width:70%;height:18px;margin-bottom:8px;"></div>
+        <div class="lp lp-white" style="width:45%;height:13px;"></div>
+    </div>
+
+    <!-- SANTOS CONHECIDOS -->
+    <section class="secao">
+        <h2 class="secao-titulo">Santos mais conhecidos</h2>
+        <div class="santos-grid" id="santos-grid"></div>
+
+        <a href="https://santo.cancaonova.com/santos/" target="_blank" rel="noopener noreferrer"
+            style="display:block; text-align:center; margin-top:24px; font-size:13px; color:var(--azul-royal); font-weight:700; font-family:var(--fonte-titulo); letter-spacing:0.06em; text-decoration:none;">
+            Pesquisar todos os santos (A a Z) ↗
+        </a>
+    </section>
+
+    <div style="height:24px;"></div>
+
+    <!-- OVERLAY BIOGRAFIA -->
+    <div id="bio-overlay" class="bio-overlay">
+        <div class="bio-topo">
+            <button class="bio-fechar" onclick="fecharBio()">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5"
+                    stroke-linecap="round">
+                    <polyline points="15 18 9 12 15 6" />
+                </svg>
+            </button>
+            <div class="bio-topo-info">
+                <h3 id="bio-nome">Santo</h3>
+                <p id="bio-data">Data</p>
+            </div>
+        </div>
+        <div class="bio-corpo" id="bio-corpo"></div>
+    </div>
+
+    <!-- NAV -->
+    <nav class="nav-bottom">
+        <a href="../index.html" class="nav-item"><svg width="22" height="22" viewBox="0 0 24 24" fill="none"
+                stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
+            </svg><span>Início</span></a>
+        <a href="biblia.html" class="nav-item"><svg width="22" height="22" viewBox="0 0 24 24" fill="none"
+                stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" />
+                <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z" />
+            </svg><span>Bíblia</span></a>
+        <a href="terco.html" class="nav-item"><svg width="22" height="22" viewBox="0 0 24 24" fill="none"
+                stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="3" />
+                <circle cx="12" cy="4" r="2" />
+                <circle cx="20" cy="12" r="2" />
+                <circle cx="12" cy="20" r="2" />
+                <circle cx="4" cy="12" r="2" />
+                <line x1="12" y1="6" x2="12" y2="9" />
+                <line x1="15" y1="12" x2="18" y2="12" />
+                <line x1="12" y1="15" x2="12" y2="18" />
+                <line x1="6" y1="12" x2="9" y2="12" />
+            </svg><span>Terço</span></a>
+        <a href="santos.html" class="nav-item ativo"><svg width="22" height="22" viewBox="0 0 24 24" fill="none"
+                stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="8" r="4" />
+                <path d="M6 20v-2a6 6 0 0 1 12 0v2" />
+            </svg><span>Santos</span></a>
+        <a href="avisos.html" class="nav-item"><svg width="22" height="22" viewBox="0 0 24 24" fill="none"
+                stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9" />
+                <path d="M13.73 21a2 2 0 0 1-3.46 0" />
+            </svg><span>Avisos</span></a>
+    </nav>
+
+    <script>
+        // ===== API: SANTO DO DIA (DIRETO DA CANÇÃO NOVA) =====
+        async function carregarSantoDia() {
+            const card = document.getElementById('card-santo-dia');
+            const dataHoje = `${new Date().getDate()} de ${mesAtual()}`;
+
+            try {
+                // Bula o bloqueio de CORS lendo o site oficial
+                const urlAlvo = 'https://santo.cancaonova.com/';
+                const r = await fetch(`https://api.allorigins.win/get?url=${encodeURIComponent(urlAlvo)}`);
+                if (!r.ok) throw new Error();
+
+                const dados = await r.json();
+                const parser = new DOMParser();
+                const doc = parser.parseFromString(dados.contents, "text/html");
+
+                const tituloSite = doc.querySelector('h1.entry-title');
+                const conteudoSite = doc.querySelector('.entry-content');
+
+                if (tituloSite) {
+                    const textoCompleto = tituloSite.textContent.trim();
+                    let nome = textoCompleto;
+                    let sub = "Exemplo de fé e santidade";
+
+                    // Corta o nome na vírgula ou traço
+                    if (textoCompleto.includes(',')) {
+                        const partes = textoCompleto.split(/,(.+)/);
+                        nome = partes[0].trim();
+                        sub = partes[1].trim();
+                    } else if (textoCompleto.includes(' - ')) {
+                        const partes = textoCompleto.split(/ - (.+)/);
+                        nome = partes[0].trim();
+                        sub = partes[1].trim();
+                    }
+                    sub = sub.charAt(0).toUpperCase() + sub.slice(1);
+
+                    // Pega os parágrafos da biografia no site
+                    let bioTexto = [];
+                    if (conteudoSite) {
+                        const paragrafos = conteudoSite.querySelectorAll('p');
+                        paragrafos.forEach(p => {
+                            const t = p.textContent.trim();
+                            if (t.length > 20) bioTexto.push({ titulo: null, texto: t });
+                        });
+                    }
+
+                    santoHoje = { nome, sub, dia: dataHoje, bioObj: bioTexto };
+
+                    card.innerHTML = `
+          <div class="santo-dia-label">✦ Santo de Hoje · ${dataHoje}</div>
+          <div class="santo-dia-nome">${nome}</div>
+          <div class="santo-dia-sub">${sub}</div>
+          <button class="santo-dia-btn" onclick="abrirBioAPI()">Ler biografia completa →</button>`;
+                    return;
+                }
+            } catch (e) {
+                console.warn("Canção Nova falhou. Verifique a internet.");
+            }
+
+            // Se o celular estiver sem internet
+            card.innerHTML = `
+      <div class="santo-dia-label">✦ Santo de Hoje · ${dataHoje}</div>
+      <div class="santo-dia-nome">Santo do Dia</div>
+      <div class="santo-dia-sub">Verifique sua conexão para carregar da Canção Nova.</div>`;
+        }
+
+        let santoHoje = null;
+        function mesAtual() {
+            const m = ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'];
+            return m[new Date().getMonth()];
+        }
+
+        function abrirBioAPI() {
+            if (!santoHoje) return;
+            abrirBio({
+                nome: santoHoje.nome,
+                data: santoHoje.dia,
+                categorias: ['Santo do Dia', 'Canção Nova'],
+                bio: santoHoje.bioObj && santoHoje.bioObj.length > 0 ? santoHoje.bioObj : [{ titulo: null, texto: "Biografia não disponível no momento." }]
+            });
+        }
+
+        carregarSantoDia();
+
+        // ===== SANTOS FIXOS (PARA A GRADE INFERIOR) =====
+        const santos = [
+            {
+                nome: 'São José', emoji: '🔨', data: '19 de Março',
+                categorias: ['Pai Adotivo de Jesus', 'Carpinteiro'],
+                bio: [
+                    { titulo: 'Esposo de Maria', texto: 'São José foi escolhido por Deus para ser o esposo da Virgem Maria e pai terreno de Jesus Cristo. Era descendente da casa de Davi, conforme anunciado pelas profecias messiânicas.' },
+                    { titulo: 'Guardião da Sagrada Família', texto: 'José protegeu Maria e Jesus durante a fuga para o Egito, fugindo da perseguição de Herodes. Retornou depois para Nazaré, onde criou Jesus com amor e sabedoria.' }
+                ]
+            },
+            {
+                nome: 'São João Bosco', emoji: '👨‍👦', data: '31 de Janeiro',
+                categorias: ['Sacerdote', 'Padroeiro da Juventude'],
+                bio: [
+                    { titulo: 'O Pai dos Jovens', texto: 'João Bosco nasceu na Itália em 1815. De família muito pobre, perdeu o pai cedo e foi criado por sua mãe, Mamãe Margarida. Desde pequeno, sentiu o chamado para ajudar os jovens.' },
+                    { titulo: 'O Sistema Preventivo', texto: 'Fundou o Oratório de São Francisco de Sales, acolhendo meninos de rua em Turim. Seu lema era: Dai-me almas e ficai com o resto.' }
+                ]
+            },
+            {
+                nome: 'São Carlo Acutis', emoji: '💻', data: '12 de Outubro',
+                categorias: ['Jovem', 'Itália', 'Internet'],
+                bio: [
+                    { titulo: 'O Jovem Normal', texto: 'Carlo Acutis nasceu em 1991. Era um adolescente comum que jogava videogame, gostava de futebol e era apaixonado por computação.' },
+                    { titulo: 'Amor pela Eucaristia', texto: 'Usou suas habilidades como programador para criar um site que catalogava todos os Milagres Eucarísticos do mundo. Faleceu aos 15 anos devido a uma leucemia e foi canonizado em 7 de setembro de 2025.' }
+                ]
+            },
+            {
+                nome: 'São Tarcísio', emoji: '🥖', data: '15 de Agosto',
+                categorias: ['Mártir', 'Coroinhas'],
+                bio: [
+                    { titulo: 'O Jovem Acólito', texto: 'Tarcísio era um menino cristão que viveu em Roma no século III. Ajudava nas missas secretas nas catacumbas.' },
+                    { titulo: 'A Missão Perigosa', texto: 'Ofereceu-se para levar a hóstia escondida aos cristãos presos. No caminho, foi abordado por pagãos e apedrejado até a morte protegendo o Corpo de Cristo.' }
+                ]
+            },
+            {
+                nome: 'Santa Dulce dos Pobres', emoji: '🏥', data: '13 de Agosto',
+                categorias: ['Brasil', 'Caridade'],
+                bio: [
+                    { titulo: 'O Anjo Bom da Bahia', texto: 'Maria Rita nasceu em Salvador (1914). Desde cedo acolhia mendigos. Sem ter onde abrigar os doentes, pediu para usar o galinheiro do convento. Esse foi o embrião do Hospital Santo Antônio.' }
+                ]
+            },
+            {
+                nome: 'São Francisco de Assis', emoji: '🕊️', data: '4 de Outubro',
+                categorias: ['Frade', 'Itália', 'Natureza'],
+                bio: [
+                    { titulo: 'Conversão', texto: 'Filho de um rico comerciante, levou uma vida festiva até ouvir Jesus do crucifixo dizer: "vai e reconstrói a minha Igreja". Abandonou a riqueza e abraçou a pobreza radical.' }
+                ]
+            },
+            {
+                nome: 'Santa Teresa de Ávila', emoji: '✍️', data: '15 de Outubro',
+                categorias: ['Doutora da Igreja', 'Mística'],
+                bio: [
+                    { titulo: 'Vida e Vocação', texto: 'Nasceu na Espanha (1515). Passou anos de luta espiritual até uma profunda conversão. Escreveu obras fundamentais como "O Castelo Interior".' }
+                ]
+            },
+            {
+                nome: 'São João Paulo II', emoji: '✝️', data: '22 de Outubro',
+                categorias: ['Papa', 'Jovens'],
+                bio: [
+                    { titulo: 'O Papa da Juventude', texto: 'Primeiro Papa polonês. Sobreviveu a um atentado em 1981 e perdoou o atirador na prisão. Convocou as Jornadas Mundiais da Juventude (JMJ).' }
+                ]
+            },
+            {
+                nome: 'Santa Teresinha', emoji: '🌸', data: '1º de Outubro',
+                categorias: ['Doutora da Igreja', 'Carmelita'],
+                bio: [
+                    { titulo: 'A Pequena Via', texto: 'Entrou para o Carmelo com 15 anos. Ensinou que a santidade não está em feitos gigantescos, mas em fazer pequenas coisas com imenso amor.' }
+                ]
+            },
+            {
+                nome: 'São Miguel Arcanjo', emoji: '⚔️', data: '29 de Setembro',
+                categorias: ['Arcanjo', 'Batalha Espiritual'],
+                bio: [
+                    { titulo: 'Príncipe dos Anjos', texto: 'Seu nome significa "Quem é como Deus?". Aparece no Apocalipse liderando a expulsão de Satanás do céu. A oração a ele é uma forte arma espiritual.' }
+                ]
+            },
+            {
+                nome: 'Santo Antônio de Pádua', emoji: '🍞', data: '13 de Junho',
+                categorias: ['Doutor da Igreja', 'Pregador'],
+                bio: [
+                    { titulo: 'O Pregador', texto: 'Português de nascimento, seu dom da pregação na Itália o tornou lendário, arrastando multidões. É famoso pela caridade.' }
+                ]
+            },
+            {
+                nome: 'Santa Rita de Cássia', emoji: '🥀', data: '22 de Maio',
+                categorias: ['Viúva', 'Causas Impossíveis'],
+                bio: [
+                    { titulo: 'Paciência e Dor', texto: 'Suportou um casamento violento, convertendo o marido. Após perder os filhos, entrou para o convento e recebeu na testa a chaga de um espinho da coroa de Jesus.' }
+                ]
+            },
+            {
+                nome: 'São Sebastião', emoji: '🏹', data: '20 de Janeiro',
+                categorias: ['Mártir', 'Soldado'],
+                bio: [
+                    { titulo: 'Soldado de Cristo', texto: 'Soldado romano que secretamente confortava os cristãos. Ao ser descoberto, foi condenado a morrer cravado por flechas.' }
+                ]
+            },
+            {
+                nome: 'Santo Agostinho', emoji: '📖', data: '28 de Agosto',
+                categorias: ['Doutor da Igreja', 'Convertido'],
+                bio: [
+                    { titulo: 'Tarde te Amei', texto: 'Levou uma vida de prazeres por muitos anos. Converteu-se aos 33 anos. Sua frase famosa é: "Nosso coração está inquieto até repousar em Ti, Senhor."' }
+                ]
+            },
+            {
+                nome: 'Santa Mônica', emoji: '🙏', data: '27 de Agosto',
+                categorias: ['Mãe de Agostinho', 'Perseverança'],
+                bio: [
+                    { titulo: 'As Lágrimas de uma Mãe', texto: 'Rezou chorando por 17 anos seguidos pela conversão de seu filho. Viu-o ser batizado pouco antes de morrer.' }
+                ]
+            },
+            {
+                nome: 'São Pedro Apóstolo', emoji: '🔑', data: '29 de Junho',
+                categorias: ['Primeiro Papa', 'Pescador'],
+                bio: [
+                    { titulo: 'A Rocha', texto: 'Um humilde pescador chamado Simão. Jesus mudou seu nome para Pedro e o fez o primeiro líder da Igreja. Foi crucificado de cabeça para baixo em Roma.' }
+                ]
+            },
+            {
+                nome: 'São Paulo Apóstolo', emoji: '📜', data: '29 de Junho',
+                categorias: ['Missionário', 'Escritor'],
+                bio: [
+                    { titulo: 'O Grande Missionário', texto: 'Prendia os cristãos até ser derrubado no caminho de Damasco. Tornou-se Paulo, fundou igrejas e escreveu grande parte do Novo Testamento.' }
+                ]
+            },
+            {
+                nome: 'Santa Clara de Assis', emoji: '🕯️', data: '11 de Agosto',
+                categorias: ['Fundadora', 'Pobreza'],
+                bio: [
+                    { titulo: 'As Clarissas', texto: 'Fugiu de casa aos 18 anos para viver na pobreza total. Fundou a Ordem das Clarissas e espantou um exército invasor segurando o Santíssimo Sacramento.' }
+                ]
+            }
+        ];
+
+        // Renderiza a grade
+        const grid = document.getElementById('santos-grid');
+        santos.forEach((s) => {
+            const card = document.createElement('div');
+            card.className = 'santo-card-mini';
+            card.innerHTML = `
+      <div class="s-icone">${s.emoji}</div>
+      <h4>${s.nome}</h4>
+      <span>${s.data}</span>`;
+            card.onclick = () => abrirBio(s);
+            grid.appendChild(card);
+        });
+
+        // ===== ABRIR E FECHAR BIOGRAFIA =====
+        function abrirBio(santo) {
+            document.getElementById('bio-nome').textContent = santo.nome;
+            document.getElementById('bio-data').textContent = santo.data || '';
+            document.getElementById('bio-overlay').classList.add('aberto');
+
+            const corpo = document.getElementById('bio-corpo');
+            let html = '';
+
+            if (santo.categorias?.length) {
+                html += `<div style="margin-bottom:14px;">`;
+                santo.categorias.forEach(c => { html += `<span class="bio-tag">${c}</span>`; });
+                html += `</div>`;
+            }
+
+            if (Array.isArray(santo.bio)) {
+                santo.bio.forEach(sec => {
+                    html += `<div class="bio-secao">`;
+                    if (sec.titulo) html += `<div class="bio-secao-titulo">✦ ${sec.titulo}</div>`;
+                    const paragrafos = sec.texto.split('\n\n').filter(p => p.trim());
+                    paragrafos.forEach(p => {
+                        html += `<p>${p.replace(/\n/g, '<br>')}</p>`;
+                    });
+                    html += `</div>`;
+                });
+            }
+
+            corpo.innerHTML = html;
+            corpo.scrollTop = 0;
+        }
+
+        function fecharBio() {
+            document.getElementById('bio-overlay').classList.remove('aberto');
+        }
+    </script>
+</body>
+
+</html>

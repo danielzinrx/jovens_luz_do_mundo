@@ -1,0 +1,489 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Orações — Jovens Luz do Mundo</title>
+    <link rel="stylesheet" href="../css/style.css" />
+    <link rel="icon" type="image/svg+xml" href="../img/gemini-svg.svg" />
+
+    <style>
+        /* ===== CATEGORIAS ===== */
+        .cats {
+            display: flex;
+            gap: 8px;
+            padding: 16px 16px 0;
+            overflow-x: auto;
+            scrollbar-width: none;
+        }
+
+        .cats::-webkit-scrollbar {
+            display: none;
+        }
+
+        .cat-btn {
+            flex-shrink: 0;
+            padding: 7px 16px;
+            border-radius: 20px;
+            border: 1.5px solid var(--azul-royal);
+            background: transparent;
+            color: var(--azul-royal);
+            font-family: var(--fonte-titulo);
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transicao);
+            letter-spacing: 0.04em;
+        }
+
+        .cat-btn.ativo {
+            background: var(--azul-royal);
+            color: #fff;
+        }
+
+        /* ===== LISTA DE ORAÇÕES ===== */
+        .oracao-item {
+            background: var(--branco-puro);
+            border-radius: var(--raio-sm);
+            margin: 10px 16px 0;
+            padding: 16px;
+            box-shadow: var(--sombra);
+            cursor: pointer;
+            transition: var(--transicao);
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            border-left: 4px solid transparent;
+        }
+
+        .oracao-item:hover {
+            transform: translateX(4px);
+            border-left-color: var(--dourado);
+        }
+
+        .oracao-item .o-emoji {
+            font-size: 22px;
+            flex-shrink: 0;
+            width: 42px;
+            height: 42px;
+            border-radius: 10px;
+            background: rgba(201, 168, 76, 0.10);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .oracao-item h4 {
+            font-family: var(--fonte-titulo);
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--texto-escuro);
+            margin-bottom: 3px;
+        }
+
+        .oracao-item p {
+            font-size: 12px;
+            color: var(--cinza-texto);
+        }
+
+        .oracao-item .seta {
+            margin-left: auto;
+            color: var(--cinza-texto);
+            flex-shrink: 0;
+            font-size: 18px;
+        }
+
+        /* ===== OVERLAY ORAÇÃO ===== */
+        .oracao-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: var(--branco-gelo);
+            z-index: 200;
+            flex-direction: column;
+        }
+
+        .oracao-overlay.aberto {
+            display: flex;
+        }
+
+        .oracao-topo {
+            background: linear-gradient(135deg, var(--azul-royal-escuro), var(--azul-royal));
+            padding: 16px 16px 24px;
+            flex-shrink: 0;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .oracao-fechar {
+            background: rgba(255, 255, 255, 0.15);
+            border: none;
+            border-radius: 10px;
+            width: 36px;
+            height: 36px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            flex-shrink: 0;
+        }
+
+        .oracao-topo-info h3 {
+            font-family: var(--fonte-titulo);
+            font-size: 18px;
+            font-weight: 700;
+            color: #fff;
+        }
+
+        .oracao-topo-info p {
+            font-size: 12px;
+            color: var(--dourado-claro);
+            margin-top: 2px;
+        }
+
+        .oracao-corpo {
+            flex: 1;
+            overflow-y: auto;
+            padding: 24px 16px 40px;
+        }
+
+        .oracao-texto-principal {
+            background: var(--branco-puro);
+            border-radius: var(--raio);
+            padding: 22px 20px;
+            box-shadow: var(--sombra);
+            border-top: 3px solid var(--dourado);
+            font-size: 16px;
+            line-height: 2;
+            color: var(--texto-escuro);
+            margin-bottom: 14px;
+        }
+
+        .oracao-nota {
+            background: rgba(201, 168, 76, 0.08);
+            border: 1px solid rgba(201, 168, 76, 0.25);
+            border-radius: var(--raio-sm);
+            padding: 14px 16px;
+            font-size: 13px;
+            color: var(--dourado-escuro);
+            line-height: 1.7;
+            margin-bottom: 12px;
+        }
+
+        .oracao-historia {
+            background: var(--branco-puro);
+            border-radius: var(--raio-sm);
+            padding: 16px;
+            box-shadow: var(--sombra);
+            margin-bottom: 12px;
+        }
+
+        .oracao-historia h4 {
+            font-family: var(--fonte-titulo);
+            font-size: 12px;
+            font-weight: 700;
+            letter-spacing: 0.08em;
+            color: var(--azul-royal);
+            text-transform: uppercase;
+            margin-bottom: 8px;
+        }
+
+        .oracao-historia p {
+            font-size: 13px;
+            color: var(--cinza-texto);
+            line-height: 1.7;
+        }
+    </style>
+</head>
+
+<body>
+
+    <header class="page-header">
+        <a href="../index.html" class="voltar">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5"
+                stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="15 18 9 12 15 6" />
+            </svg>
+        </a>
+        <h2>Orações</h2>
+    </header>
+
+    <!-- Categorias -->
+    <div class="cats">
+        <button class="cat-btn ativo" onclick="filtrar('todas')">Todas</button>
+        <button class="cat-btn" onclick="filtrar('basicas')">Básicas</button>
+        <button class="cat-btn" onclick="filtrar('maria')">Marianas</button>
+        <button class="cat-btn" onclick="filtrar('anjos')">Anjos</button>
+        <button class="cat-btn" onclick="filtrar('protecao')">Proteção</button>
+        <button class="cat-btn" onclick="filtrar('missa')">Missa</button>
+    </div>
+
+    <div id="lista-oracoes" style="padding-bottom:90px;"></div>
+
+    <!-- Overlay oração -->
+    <div id="oracao-overlay" class="oracao-overlay">
+        <div class="oracao-topo">
+            <button class="oracao-fechar" onclick="fecharOracao()">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5"
+                    stroke-linecap="round">
+                    <polyline points="15 18 9 12 15 6" />
+                </svg>
+            </button>
+            <div class="oracao-topo-info">
+                <h3 id="ot-nome">Oração</h3>
+                <p id="ot-cat">Categoria</p>
+            </div>
+        </div>
+        <div class="oracao-corpo" id="oracao-corpo"></div>
+    </div>
+
+    <!-- NAV -->
+    <nav class="nav-bottom">
+        <a href="../index.html" class="nav-item"><svg width="22" height="22" viewBox="0 0 24 24" fill="none"
+                stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
+            </svg><span>Início</span></a>
+        <a href="biblia.html" class="nav-item"><svg width="22" height="22" viewBox="0 0 24 24" fill="none"
+                stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" />
+                <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z" />
+            </svg><span>Bíblia</span></a>
+        <a href="terco.html" class="nav-item"><svg width="22" height="22" viewBox="0 0 24 24" fill="none"
+                stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="3" />
+                <circle cx="12" cy="4" r="2" />
+                <circle cx="20" cy="12" r="2" />
+                <circle cx="12" cy="20" r="2" />
+                <circle cx="4" cy="12" r="2" />
+                <line x1="12" y1="6" x2="12" y2="9" />
+                <line x1="15" y1="12" x2="18" y2="12" />
+                <line x1="12" y1="15" x2="12" y2="18" />
+                <line x1="6" y1="12" x2="9" y2="12" />
+            </svg><span>Terço</span></a>
+        <a href="santos.html" class="nav-item"><svg width="22" height="22" viewBox="0 0 24 24" fill="none"
+                stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="8" r="4" />
+                <path d="M6 20v-2a6 6 0 0 1 12 0v2" />
+            </svg><span>Santos</span></a>
+        <a href="avisos.html" class="nav-item"><svg width="22" height="22" viewBox="0 0 24 24" fill="none"
+                stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9" />
+                <path d="M13.73 21a2 2 0 0 1-3.46 0" />
+            </svg><span>Avisos</span></a>
+    </nav>
+
+    <script>
+        const oracoes = [
+            // ===== BÁSICAS =====
+            {
+                nome: 'Pai Nosso', emoji: '✝️', cat: 'basicas', sub: 'A oração ensinada por Jesus',
+                texto: `Pai nosso que estais no céu,\nsantificado seja o vosso nome;\nvenha a nós o vosso reino;\nseja feita a vossa vontade\nassim na terra como no céu.\nO pão nosso de cada dia nos dai hoje;\nperdoai-nos as nossas ofensas,\nassim como nós perdoamos\na quem nos tem ofendido;\ne não nos deixeis cair em tentação;\nmas livrai-nos do mal.\nAmém.`,
+                historia: 'O Pai Nosso é a oração ensinada por Jesus aos seus discípulos, relatada em Mateus 6,9-13 e Lucas 11,2-4. É chamada de "oração dominical" (do Senhor). Contém sete pedidos divididos em dois grupos: os três primeiros voltados a Deus e os quatro seguintes às necessidades humanas.',
+                nota: null,
+            },
+            {
+                nome: 'Glória ao Pai', emoji: '☀️', cat: 'basicas', sub: 'Doxologia Trinitária',
+                texto: `Glória ao Pai, ao Filho\ne ao Espírito Santo.\nComo era no princípio,\nagora e sempre,\npelos séculos dos séculos.\nAmém.`,
+                historia: 'O Glória ao Pai, também chamado de "Doxologia Menor", é uma breve oração de louvor à Santíssima Trindade. É usado ao final de cada Salmo na Liturgia das Horas e após cada dezena do Terço.',
+                nota: null,
+            },
+            {
+                nome: 'Credo dos Apóstolos', emoji: '📜', cat: 'basicas', sub: 'Profissão de Fé',
+                texto: `Creio em Deus Pai todo-poderoso,\ncriador do céu e da terra;\ne em Jesus Cristo, seu único Filho, Nosso Senhor;\nque foi concebido pelo poder do Espírito Santo;\nnasceu da Virgem Maria;\npadeceu sob Pôncio Pilatos;\nfoi crucificado, morto e sepultado;\ndesceu à mansão dos mortos;\nressuscitou ao terceiro dia;\nsubiu aos céus;\nestá sentado à direita de Deus Pai todo-poderoso,\ndonde há de vir a julgar os vivos e os mortos;\ncreio no Espírito Santo;\nna Santa Igreja Católica;\nna comunhão dos santos;\nna remissão dos pecados;\nna ressurreição da carne;\nna vida eterna.\nAmém.`,
+                historia: 'O Credo dos Apóstolos é a mais antiga profissão de fé da Igreja, com raízes no século II. É chamado assim porque contém em síntese o ensinamento dos Apóstolos. É usado no Terço e no Batismo.',
+                nota: null,
+            },
+            {
+                nome: 'Vinde Espírito Santo', emoji: '🔥', cat: 'basicas', sub: 'Invocação ao Espírito',
+                texto: `Vinde, Espírito Santo,\nenchei os corações dos vossos fiéis\ne acendei neles o fogo do Vosso amor.\nEnviai o Vosso Espírito e tudo será criado,\ne renovareis a face da terra.\n\nOremos:\nÓ Deus, que instruístes os corações dos vossos fiéis\ncom a luz do Espírito Santo,\nfazei que apreciemos retamente todas as coisas\nsegundo o mesmo Espírito\ne gozemos sempre da sua consolação.\nPor Cristo Senhor Nosso.\nAmém.`,
+                historia: 'Uma das mais belas e tradicionais orações da Igreja pedindo a luz, a sabedoria e a força do Espírito Santo. É frequentemente rezada antes de reuniões, encontros de jovens e estudos.',
+                nota: '✦ Reze antes de estudar ou iniciar um encontro do grupo jovem.',
+            },
+            {
+                nome: 'Oração da Manhã', emoji: '🌅', cat: 'basicas', sub: 'Oferecimento do dia a Deus',
+                texto: `Senhor meu Deus,\nofereço-vos este dia:\nmeus pensamentos, palavras e ações.\nUnindo-os aos méritos de Jesus Cristo,\nofereço tudo pela vossa maior glória,\npela salvação das almas\ne por todas as intenções do Santo Padre.\nAmém.\n\nVirgem Maria, Rainha dos Anjos,\ncobri-me com o vosso manto.\nSanto Anjo do Senhor,\nguardai-me neste dia.\nAmém.`,
+                historia: 'O hábito de oferecer o dia a Deus pela manhã é uma prática espiritual recomendada por todos os mestres de espiritualidade. Orienta toda a jornada como uma oração contínua.',
+                nota: '✦ Reze esta oração ao acordar, antes de começar o dia.',
+            },
+            {
+                nome: 'Oração da Noite', emoji: '🌙', cat: 'basicas', sub: 'Agradecimento e descanso',
+                texto: `Meu Deus e meu Pai,\nelevo a Vós o meu pensamento e o meu coração.\nAgradeço-Vos por todos os benefícios\nque me concedestes neste dia.\nPeço-Vos perdão pelas minhas faltas\ne prometo, com a Vossa graça, emendar-me.\nProtegei-me durante o sono\ne dai-me um descanso tranquilo.\nAmém.`,
+                historia: 'A oração da noite é o momento de fazer o balanço do dia (exame de consciência), agradecer as graças recebidas e pedir proteção para um sono reparador.',
+                nota: '✦ Ideal para rezar antes de dormir, após um breve momento de silêncio.',
+            },
+            {
+                nome: 'Oração antes das Refeições', emoji: '🍞', cat: 'basicas', sub: 'Ação de graças à mesa',
+                texto: `Abençoai-nos, Senhor,\ne a estes alimentos que vamos tomar.\nDai pão a quem tem fome\ne fome de justiça a quem tem pão.\nAmém.`,
+                historia: 'O costume de rezar antes das refeições remonta ao exemplo do próprio Jesus, que abençoou o pão na multiplicação dos pães e na Última Ceia. É um gesto de reconhecimento de que todo bem vem de Deus.',
+                nota: null,
+            },
+
+            // ===== MARIANAS =====
+            {
+                nome: 'Ave Maria', emoji: '🌹', cat: 'maria', sub: 'A saudação do Anjo a Maria',
+                texto: `Ave Maria, cheia de graça,\no Senhor é convosco;\nbendita sois vós entre as mulheres,\ne bendito é o fruto do vosso ventre, Jesus.\nSanta Maria, Mãe de Deus,\nrogai por nós pecadores,\nagora e na hora da nossa morte.\nAmém.`,
+                historia: 'A primeira parte da Ave Maria vem do Evangelho de Lucas: as palavras do Anjo Gabriel (Lc 1,28) e de Isabel (Lc 1,42). A segunda parte, a petição a Maria, foi acrescentada gradualmente pela Igreja. A forma atual foi fixada no século XVI.',
+                nota: null,
+            },
+            {
+                nome: 'Salve Rainha', emoji: '👑', cat: 'maria', sub: 'Antífona mariana tradicional',
+                texto: `Salve Rainha, Mãe de misericórdia,\nvida, doçura e esperança nossa, salve!\nA vós bradamos, os degredados filhos de Eva;\na vós suspiramos, gemendo e chorando\nneste vale de lágrimas.\nEia, pois, advogada nossa,\nesses vossos olhos misericordiosos a nós volvei;\ne depois deste desterro,\nmostrai-nos Jesus, bendito fruto do vosso ventre.\nÓ clemente, ó piedosa,\nó doce sempre Virgem Maria!\n\nV. Rogai por nós, Santa Mãe de Deus.\nR. Para que sejamos dignos das promessas de Cristo.`,
+                historia: 'A Salve Rainha é uma das mais antigas antífonas marianas, atribuída ao monge Hermanno Contrátil (séc. XI) ou a São Bernardo de Claraval. É rezada ao final do Terço e da Liturgia das Horas.',
+                nota: null,
+            },
+            {
+                nome: 'Magnificat', emoji: '📖', cat: 'maria', sub: 'O Cântico de Maria',
+                texto: `A minha alma engrandece ao Senhor\ne o meu espírito se alegra em Deus, meu Salvador,\npois atentou para a humildade da sua serva.\nDe agora em diante, todas as gerações me chamarão bem-aventurada,\npois o Poderoso fez grandes coisas em meu favor;\nsanto é o seu nome.\n\nA sua misericórdia estende-se aos que o temem,\nde geração em geração.\nEle realizou proezas com o seu braço;\ndispersou os que são soberbos no mais íntimo do coração.\n\nDerrubou governantes dos seus tronos,\nmas exaltou os humildes.\nEncheu de coisas boas os famintos,\nmas despediu de mãos vazias os ricos.\n\nAjudou a seu servo Israel,\nlembrando-se da sua misericórdia\npara com Abraão e a sua descendência para sempre,\ncomo dissera aos nossos antepassados.`,
+                historia: 'O Magnificat (Lc 1,46-55) é o cântico de louvor e gratidão entoado pela Virgem Maria durante a Visitação à sua prima Isabel. É uma das mais belas orações bíblicas.',
+                nota: null,
+            },
+            {
+                nome: 'À Vossa Proteção', emoji: '🛡️', cat: 'maria', sub: 'Sub Tuum Praesidium',
+                texto: `À vossa proteção recorremos, Santa Mãe de Deus;\nnão desprezeis as nossas súplicas em nossas necessidades,\nmas livrai-nos sempre de todos os perigos,\nó Virgem gloriosa e bendita.\nAmém.`,
+                historia: 'O "Sub Tuum Praesidium" é a oração mariana mais antiga de que se tem registro, encontrada em um papiro no Egito datado do século III. Mostra a confiança dos primeiros cristãos na intercessão de Maria nas perseguições.',
+                nota: null,
+            },
+            {
+                nome: 'Memorare', emoji: '🌸', cat: 'maria', sub: 'Lembrai-vos, ó Santíssima Virgem',
+                texto: `Lembrai-vos, ó Santíssima Virgem Maria,\nque jamais se ouviu dizer\nque alguém que tenha recorrido à vossa proteção,\nimplorado vosso auxílio\nou solicitado vossa intercessão\ntenha sido desamparado.\nAnimado por esta confiança,\na vós recorro, ó Virgem das Virgens, minha Mãe;\na vós venho e, pecador arrependido,\nme prostro aos vossos pés.\nNão desprezeis as minhas súplicas,\nó Mãe do Verbo Encarnado,\nmas, em vossa misericórdia, ouvi-me e atendei-me.\nAmém.`,
+                historia: 'O Memorare é uma oração mariana fortemente associada a São Bernardo de Claraval (séc. XII), embora sua forma atual seja do século XV. É uma das orações de intercessão mariana mais populares do mundo.',
+                nota: null,
+            },
+            {
+                nome: 'Angelus', emoji: '🔔', cat: 'maria', sub: 'Rezado às 6h, 12h e 18h',
+                texto: `V. O Anjo do Senhor anunciou a Maria.\nR. E ela concebeu pelo Espírito Santo.\nAve Maria...\n\nV. Eis aqui a serva do Senhor.\nR. Faça-se em mim segundo a vossa palavra.\nAve Maria...\n\nV. E o Verbo se fez carne.\nR. E habitou entre nós.\nAve Maria...\n\nV. Rogai por nós, Santa Mãe de Deus.\nR. Para que sejamos dignos das promessas de Cristo.\n\nOremos:\nDerramai, Senhor, a vossa graça em nossas almas,\npara que, tendo conhecido pela mensagem do Anjo\na Encarnação de Cristo, vosso Filho,\npela sua paixão e cruz sejamos levados\nà glória da ressurreição.\nPor Cristo, Nosso Senhor.\nAmém.`,
+                historia: 'O Angelus é rezado três vezes ao dia — às 6h, 12h e 18h — ao som dos sinos. É uma meditação sobre a Encarnação do Filho de Deus.',
+                nota: '✦ No tempo da Páscoa (da Páscoa até Pentecostes), o Angelus é substituído pelo Regina Caeli.',
+            },
+
+            // ===== ANJOS E PROTEÇÃO =====
+            {
+                nome: 'Santo Anjo do Senhor', emoji: '👼', cat: 'anjos', sub: 'Oração ao Anjo da Guarda',
+                texto: `Santo Anjo do Senhor,\nmeu zeloso guardador,\nse a ti me confiou a Piedade Divina,\nsempre me rege, guarda, governa e ilumina.\nAmém.`,
+                historia: 'A oração ao Santo Anjo é uma das mais antigas do catolicismo, presente em formas similares desde o século IX. A Igreja Católica ensina que cada fiel tem um anjo da guarda designado por Deus.',
+                nota: '✦ Tradição: rezar esta oração ao acordar e ao dormir.',
+            },
+            {
+                nome: 'São Miguel Arcanjo', emoji: '⚔️', cat: 'protecao', sub: 'Proteção contra o mal',
+                texto: `São Miguel Arcanjo,\ndefendei-nos no combate;\nsede nosso refúgio\ncontra as maldades e as ciladas do demônio.\nOrdene-lhe Deus, instantemente o pedimos;\ne vós, Príncipe da Milícia Celeste,\npela virtude divina, precipitai no inferno\na satanás e a todos os espíritos malignos\nque andam pelo mundo\npara perder as almas.\nAmém.`,
+                historia: 'Esta oração foi composta pelo Papa Leão XIII em 1886, após uma visão sobre a luta espiritual. Era obrigatoriamente rezada ao final de toda Missa até 1964.',
+                nota: '✦ Reze em momentos de tentação ou provação.',
+            },
+            {
+                nome: 'A Cruz Sagrada (São Bento)', emoji: '🎖️', cat: 'protecao', sub: 'Oração da Medalha',
+                texto: `A Cruz Sagrada seja a minha luz,\nnão seja o dragão o meu guia.\nRetira-te, satanás!\nNunca me aconselhes coisas vãs.\nÉ mau o que tu me ofereces,\nbebe tu mesmo os teus venenos!\nAmém.`,
+                historia: 'Esta oração está inscrita (em latim) na Medalha de São Bento, um dos sacramentais mais poderosos da Igreja, usado para proteção espiritual e exorcismos.',
+                nota: null,
+            },
+            {
+                nome: 'Oração de São Francisco', emoji: '🕊️', cat: 'protecao', sub: 'Instrumento de paz',
+                texto: `Senhor, fazei de mim um instrumento da vossa paz.\nOnde houver ódio, que eu leve o amor;\nonde houver ofensa, que eu leve o perdão;\nonde houver discórdia, que eu leve a união;\nonde houver dúvida, que eu leve a fé;\nonde houver erro, que eu leve a verdade;\nonde houver desespero, que eu leve a esperança;\nonde houver tristeza, que eu leve a alegria;\nonde houver trevas, que eu leve a luz.\n\nÓ Mestre, fazei que eu procure mais\nconsolar do que ser consolado;\ncompreender do que ser compreendido;\namar do que ser amado.\nPois é dando que se recebe;\né perdoando que se é perdoado;\ne é morrendo que se vive para a vida eterna.\nAmém.`,
+                historia: 'Apesar de ser popularmente atribuída a São Francisco de Assis, esta oração surgiu em 1912 na França, publicada numa revista católica. Reflete perfeitamente o espírito franciscano.',
+                nota: null,
+            },
+
+            // ===== MISSA / EUCARISTIA =====
+            {
+                nome: 'Alma de Cristo', emoji: '🩸', cat: 'missa', sub: 'Ação de graças após a comunhão',
+                texto: `Alma de Cristo, santificai-me.\nCorpo de Cristo, salvai-me.\nSangue de Cristo, inebriai-me.\nÁgua do lado de Cristo, lavai-me.\nPaixão de Cristo, confortai-me.\n\nÓ bom Jesus, ouvi-me.\nDentro de vossas chagas, escondei-me.\nNão permitais que me separe de Vós.\nDo espírito maligno, defendei-me.\nNa hora da minha morte, chamai-me\ne mandai-me ir para Vós,\npara que com os vossos Santos Vos louve\npor todos os séculos dos séculos.\nAmém.`,
+                historia: 'A Oração "Anima Christi" (Alma de Cristo) remonta ao início do século XIV. Tornou-se muito popular através de Santo Inácio de Loyola, que a incluiu no seu livro de Exercícios Espirituais.',
+                nota: '✦ Reze após receber a Sagrada Comunhão.',
+            },
+            {
+                nome: 'Comunhão Espiritual', emoji: '✨', cat: 'missa', sub: 'Quando não puder comungar',
+                texto: `Meu Jesus, eu creio que estais presente\nno Santíssimo Sacramento do Altar.\nAmo-Vos sobre todas as coisas,\ne minha alma suspira por Vós.\n\nMas, como não posso receber-Vos\nagora no Santíssimo Sacramento,\nvinde, ao menos espiritualmente,\nao meu coração.\n\nAbraço-me convosco como se já estivésseis comigo:\nuno-me Convosco inteiramente.\nAh! não permitais que torne a separar-me de Vós!\nAmém.`,
+                historia: 'A Comunhão Espiritual é uma prática de desejo ardente de receber Jesus Eucarístico quando não é possível fazê-lo fisicamente (sacramentalmente), muito recomendada por santos como Santo Afonso de Ligório.',
+                nota: '✦ Reze se você não puder ir à Missa ou não puder comungar.',
+            },
+            {
+                nome: 'Ato de Contrição', emoji: '💔', cat: 'missa', sub: 'Arrependimento dos pecados',
+                texto: `Meu Deus, porque sois infinitamente bom,\narrependo-me de todos os meus pecados\ne detesto-os acima de todos os males.\nResolvo firmemente com o auxílio da vossa graça\ncumprir as penitências que me forem impostas,\nevitar as ocasiões próximas de pecado\ne nunca mais vos ofender.\nAmém.`,
+                historia: 'O Ato de Contrição é uma oração de arrependimento sincero pelos pecados cometidos e firme propósito de emenda. É rezado antes da Confissão.',
+                nota: '✦ Reze esta oração antes de dormir como exame de consciência do dia, ou antes de se confessar.',
+            },
+
+            // ===== PARA OS JOVENS =====
+            {
+                nome: 'Oração do Estudante', emoji: '📚', cat: 'basicas', sub: 'São Tomás de Aquino',
+                texto: `Criador inefável, Vós que sois a verdadeira fonte da luz e da sabedoria:\n\nDignai-Vos infundir um raio de Vossa claridade\nsobre as trevas da minha inteligência,\nafastando de mim a dupla escuridão do pecado e da ignorância.\n\nDai-me a agudeza para entender,\na capacidade de reter,\na sutileza para interpretar,\na graça para expressar\ne a abundância para falar.\n\nGuiai o início, dirigi o progresso e aperfeiçoai o fim.\nPor Cristo nosso Senhor.\nAmém.`,
+                historia: 'Composta por São Tomás de Aquino, o Doutor Angélico e padroeiro dos estudantes e acadêmicos. É a oração ideal para pedir sabedoria nos estudos e clareza de mente.',
+                nota: '✦ Reze antes das provas, trabalhos da escola ou faculdade.',
+            }
+        ];
+
+        let catAtiva = 'todas';
+
+        function filtrar(cat) {
+            catAtiva = cat;
+            document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('ativo'));
+            // Usamos event.currentTarget para garantir que ele seleciona o botão inteiro, sem bugar
+            event.currentTarget.classList.add('ativo');
+            renderLista();
+        }
+
+        function renderLista() {
+            const lista = document.getElementById('lista-oracoes');
+            const filtradas = catAtiva === 'todas' ? oracoes : oracoes.filter(o => o.cat === catAtiva);
+            lista.innerHTML = '';
+
+            filtradas.forEach(o => {
+                const el = document.createElement('div');
+                el.className = 'oracao-item';
+                el.innerHTML = `
+                    <div class="o-emoji">${o.emoji}</div>
+                    <div style="flex:1;">
+                        <h4>${o.nome}</h4>
+                        <p>${o.sub}</p>
+                    </div>
+                    <span class="seta">›</span>`;
+                el.onclick = () => abrirOracao(o);
+                lista.appendChild(el);
+            });
+        }
+
+        // Inicia a lista ao abrir a página
+        renderLista();
+
+        function abrirOracao(o) {
+            document.getElementById('ot-nome').textContent = o.nome;
+            document.getElementById('ot-cat').textContent = o.sub;
+            document.getElementById('oracao-overlay').classList.add('aberto');
+
+            const corpo = document.getElementById('oracao-corpo');
+
+            // Nota (se houver)
+            const notaHtml = o.nota
+                ? `<div class="oracao-nota">${o.nota}</div>`
+                : '';
+
+            // Texto da oração quebrando as linhas direitinho
+            const textoFormatado = o.texto
+                .split('\n\n')
+                .map(bloco => `<p style="margin-bottom:12px;">${bloco.replace(/\n/g, '<br>')}</p>`)
+                .join('');
+
+            // História
+            const historiaHtml = o.historia
+                ? `<div class="oracao-historia">
+                     <h4>✦ Sobre esta oração</h4>
+                     <p>${o.historia}</p>
+                   </div>`
+                : '';
+
+            corpo.innerHTML = `
+                ${notaHtml}
+                <div class="oracao-texto-principal">${textoFormatado}</div>
+                ${historiaHtml}
+            `;
+            corpo.scrollTop = 0;
+        }
+
+        function fecharOracao() {
+            document.getElementById('oracao-overlay').classList.remove('aberto');
+        }
+    </script>
+</body>
+
+</html>

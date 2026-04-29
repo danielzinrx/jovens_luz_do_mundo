@@ -1,0 +1,841 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>História da Igreja — Jovens Luz do Mundo</title>
+    <link rel="stylesheet" href="../css/style.css" />
+    <style>
+        /* ===== FILTROS DE ERA ===== */
+        .eras {
+            display: flex;
+            gap: 8px;
+            padding: 16px 16px 0;
+            overflow-x: auto;
+            scrollbar-width: none;
+        }
+
+        .eras::-webkit-scrollbar {
+            display: none;
+        }
+
+        .era-btn {
+            flex-shrink: 0;
+            padding: 7px 15px;
+            border-radius: 20px;
+            border: 1.5px solid var(--azul-royal);
+            background: transparent;
+            color: var(--azul-royal);
+            font-family: var(--fonte-titulo);
+            font-size: 11px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transicao);
+            letter-spacing: 0.04em;
+            white-space: nowrap;
+        }
+
+        .era-btn.ativo {
+            background: var(--azul-royal);
+            color: #fff;
+        }
+
+        /* ===== INTRO ===== */
+        .historia-intro {
+            margin: 16px 16px 0;
+            background: linear-gradient(135deg, var(--azul-royal-escuro), var(--azul-royal));
+            border-radius: var(--raio);
+            padding: 20px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .historia-intro::after {
+            content: '✝';
+            position: absolute;
+            right: 16px;
+            bottom: -10px;
+            font-size: 80px;
+            color: rgba(201, 168, 76, 0.15);
+        }
+
+        .historia-intro p {
+            font-size: 13px;
+            line-height: 1.7;
+            color: rgba(255, 255, 255, 0.88);
+            position: relative;
+            z-index: 1;
+        }
+
+        .historia-intro .fonte {
+            margin-top: 10px;
+            font-size: 11px;
+            color: var(--dourado-claro);
+            font-style: italic;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* ===== LINHA DO TEMPO ===== */
+        .timeline {
+            padding: 20px 16px 90px;
+            position: relative;
+        }
+
+        .timeline::before {
+            content: '';
+            position: absolute;
+            /* Alinhamento exato: padding lateral (16px) + metade da largura da bolinha (36px) */
+            left: 52px;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: linear-gradient(to bottom, var(--dourado), var(--azul-royal-claro), var(--rosa-coral));
+            z-index: 0;
+            /* Ela fica na base */
+        }
+
+        /* Estilo das Épocas (Títulos de Era) */
+        .epoca-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin: 32px 0 20px 82px;
+            /* 82px para alinhar com o início do card da direita */
+        }
+
+        .epoca-header:first-child {
+            margin-top: 0;
+        }
+
+        .epoca-pill {
+            background: var(--azul-royal);
+            color: #fff;
+            font-family: var(--fonte-titulo);
+            font-size: 11px;
+            font-weight: 700;
+            padding: 6px 16px;
+            border-radius: 20px;
+            letter-spacing: 0.06em;
+        }
+
+        .epoca-linha {
+            flex: 1;
+            height: 1px;
+            background: var(--cinza-suave);
+        }
+
+        /* ===== EVENTO ===== */
+        .evento {
+            display: flex;
+            gap: 15px;
+            /* Espaço entre a coluna da bolinha e o card */
+            margin-bottom: 24px;
+            position: relative;
+        }
+
+        .evento-esquerda {
+            display: flex;
+            justify-content: center;
+            width: 72px;
+            /* Mantém a largura da coluna da linha */
+            flex-shrink: 0;
+            padding-top: 10px;
+        }
+
+        .evento-bolinha {
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            background: var(--cor, #888);
+            border: 4px solid #f8f9fa;
+            /* Borda da cor do fundo da página */
+            z-index: 2;
+        }
+
+        /* Escondendo o ano da esquerda e estilizando para aparecer na direita */
+        .evento-ano {
+            display: inline-block;
+            background: var(--branco-gelo);
+            color: var(--cinza-texto);
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 10px;
+            font-weight: 800;
+            margin-bottom: 8px;
+            border: 1px solid rgba(0, 0, 0, 0.05);
+        }
+
+        .evento-direita {
+            flex: 1;
+            background: var(--branco-puro);
+            border-radius: var(--raio-sm);
+            padding: 16px;
+            box-shadow: var(--sombra);
+            border-left: 4px solid var(--cor, #ccc);
+            z-index: 2;
+        }
+
+        .evento:hover .evento-direita {
+            transform: translateX(3px);
+        }
+
+        .evento-categoria {
+            font-size: 10px;
+            font-weight: 700;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            margin-bottom: 5px;
+        }
+
+        .evento-titulo {
+            font-family: var(--fonte-titulo);
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--texto-escuro);
+            margin-bottom: 5px;
+            line-height: 1.3;
+        }
+
+        .evento-resumo {
+            font-size: 12px;
+            color: var(--cinza-texto);
+            line-height: 1.6;
+        }
+
+        .evento-mais {
+            font-size: 11px;
+            font-weight: 700;
+            margin-top: 6px;
+            color: var(--azul-royal);
+            letter-spacing: 0.03em;
+        }
+
+        /* Tipos de evento — cores */
+        .t-fundacao {
+            --cor: #1B4F9B;
+        }
+
+        .t-concilio {
+            --cor: #C9A84C;
+        }
+
+        .t-martir {
+            --cor: #E8617A;
+        }
+
+        .t-papa {
+            --cor: #534AB7;
+        }
+
+        .t-doutrina {
+            --cor: #0F6E56;
+        }
+
+        .t-expansao {
+            --cor: #993C1D;
+        }
+
+        .t-reforma {
+            --cor: #854F0B;
+        }
+
+        .t-moderno {
+            --cor: #185FA5;
+        }
+
+        .evento .evento-bolinha {
+            background: var(--cor, #888);
+        }
+
+        .evento .evento-direita {
+            border-left-color: var(--cor, #ccc);
+        }
+
+        .evento .evento-categoria {
+            color: var(--cor, #888);
+        }
+
+        /* ===== OVERLAY DETALHE ===== */
+        .detalhe-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: var(--branco-gelo);
+            z-index: 200;
+            flex-direction: column;
+        }
+
+        .detalhe-overlay.aberto {
+            display: flex;
+        }
+
+        .detalhe-topo {
+            padding: 16px 16px 24px;
+            flex-shrink: 0;
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+        }
+
+        .detalhe-fechar {
+            background: rgba(255, 255, 255, 0.18);
+            border: none;
+            border-radius: 10px;
+            width: 36px;
+            height: 36px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            flex-shrink: 0;
+        }
+
+        .detalhe-topo-info .d-ano {
+            font-size: 12px;
+            color: rgba(255, 255, 255, 0.75);
+            margin-bottom: 3px;
+            letter-spacing: 0.06em;
+        }
+
+        .detalhe-topo-info h3 {
+            font-family: var(--fonte-titulo);
+            font-size: 18px;
+            font-weight: 700;
+            color: #fff;
+            line-height: 1.3;
+        }
+
+        .detalhe-corpo {
+            flex: 1;
+            overflow-y: auto;
+            padding: 20px 16px 40px;
+        }
+
+        .detalhe-secao {
+            background: var(--branco-puro);
+            border-radius: var(--raio-sm);
+            padding: 16px;
+            margin-bottom: 12px;
+            box-shadow: var(--sombra);
+        }
+
+        .detalhe-secao-titulo {
+            font-family: var(--fonte-titulo);
+            font-size: 12px;
+            font-weight: 700;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            margin-bottom: 8px;
+        }
+
+        .detalhe-secao p {
+            font-size: 14px;
+            line-height: 1.8;
+            color: var(--texto-escuro);
+        }
+
+        .cic-ref {
+            background: rgba(201, 168, 76, 0.10);
+            border: 1px solid rgba(201, 168, 76, 0.25);
+            border-radius: 8px;
+            padding: 10px 14px;
+            margin-top: 10px;
+            font-size: 12px;
+            color: var(--dourado-escuro);
+            line-height: 1.6;
+            font-style: italic;
+        }
+    </style>
+</head>
+
+<body>
+
+    <header class="page-header">
+        <a href="../index.html" class="voltar">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5"
+                stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="15 18 9 12 15 6" />
+            </svg>
+        </a>
+        <h2>História da Igreja</h2>
+    </header>
+
+    <!-- Introdução -->
+    <div class="historia-intro">
+        <p>A Igreja Católica foi fundada por Jesus Cristo e tem como missão levar o Evangelho a todos os povos. Em dois
+            mil anos de história, atravessou perseguições, concílios, reformas e expansões — sempre guiada pelo Espírito
+            Santo.</p>
+        <div class="fonte">✦ Baseado no Catecismo da Igreja Católica (CIC) · Edição Ave Maria</div>
+    </div>
+
+    <!-- Filtros -->
+    <div class="eras">
+        <button class="era-btn ativo" onclick="filtrarEra('todas', this)">Todas as eras</button>
+        <button class="era-btn" onclick="filtrarEra('apostolica', this)">Igreja Primitiva</button>
+        <button class="era-btn" onclick="filtrarEra('patristicos', this)">Patrística</button>
+        <button class="era-btn" onclick="filtrarEra('medieval', this)">Idade Média</button>
+        <button class="era-btn" onclick="filtrarEra('moderna', this)">Idade Moderna</button>
+        <button class="era-btn" onclick="filtrarEra('contemporanea', this)">Contemporânea</button>
+    </div>
+
+    <!-- Linha do tempo -->
+    <div class="timeline" id="timeline"></div>
+
+    <!-- Overlay detalhe -->
+    <div id="detalhe-overlay" class="detalhe-overlay">
+        <div class="detalhe-topo" id="detalhe-topo">
+            <button class="detalhe-fechar" onclick="fecharDetalhe()">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5"
+                    stroke-linecap="round">
+                    <polyline points="15 18 9 12 15 6" />
+                </svg>
+            </button>
+            <div class="detalhe-topo-info">
+                <div class="d-ano" id="d-ano"></div>
+                <h3 id="d-titulo"></h3>
+            </div>
+        </div>
+        <div class="detalhe-corpo" id="detalhe-corpo"></div>
+    </div>
+
+    <!-- NAV -->
+    <nav class="nav-bottom">
+        <a href="../index.html" class="nav-item"><svg width="22" height="22" viewBox="0 0 24 24" fill="none"
+                stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
+            </svg><span>Início</span></a>
+        <a href="biblia.html" class="nav-item"><svg width="22" height="22" viewBox="0 0 24 24" fill="none"
+                stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" />
+                <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z" />
+            </svg><span>Bíblia</span></a>
+        <a href="terco.html" class="nav-item"><svg width="22" height="22" viewBox="0 0 24 24" fill="none"
+                stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="3" />
+                <circle cx="12" cy="4" r="2" />
+                <circle cx="20" cy="12" r="2" />
+                <circle cx="12" cy="20" r="2" />
+                <circle cx="4" cy="12" r="2" />
+                <line x1="12" y1="6" x2="12" y2="9" />
+                <line x1="15" y1="12" x2="18" y2="12" />
+                <line x1="12" y1="15" x2="12" y2="18" />
+                <line x1="6" y1="12" x2="9" y2="12" />
+            </svg><span>Terço</span></a>
+        <a href="santos.html" class="nav-item"><svg width="22" height="22" viewBox="0 0 24 24" fill="none"
+                stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="8" r="4" />
+                <path d="M6 20v-2a6 6 0 0 1 12 0v2" />
+            </svg><span>Santos</span></a>
+        <a href="avisos.html" class="nav-item"><svg width="22" height="22" viewBox="0 0 24 24" fill="none"
+                stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9" />
+                <path d="M13.73 21a2 2 0 0 1-3.46 0" />
+            </svg><span>Avisos</span></a>
+    </nav>
+
+    <script>
+        // ===== DADOS DA LINHA DO TEMPO =====
+        // Baseado no Catecismo da Igreja Católica (CIC) e documentos da Igreja
+        const epocas = [
+            {
+                id: 'apostolica',
+                titulo: 'Igreja Primitiva e Apostólica',
+                periodo: 'Séculos I – II d.C.',
+                cor: '#1B4F9B',
+                eventos: [
+                    {
+                        ano: '33 d.C.', tipo: 't-fundacao', categoria: 'Fundação',
+                        titulo: 'Pentecostes — O Nascimento da Igreja',
+                        resumo: 'O Espírito Santo desce sobre Maria e os Apóstolos. Pedro proclama o primeiro sermão e 3.000 pessoas são batizadas.',
+                        detalhe: [
+                            { titulo: 'O evento fundador', texto: 'Cinquenta dias após a Ressurreição de Cristo, no dia de Pentecostes, o Espírito Santo desceu sobre os apóstolos e Maria em forma de línguas de fogo (At 2,1-4). Pedro pregou e três mil pessoas receberam o Batismo naquele mesmo dia. A Igreja Católica considera este o início do seu ministério público.' },
+                            { titulo: 'O que diz o Catecismo', texto: 'O Catecismo (CIC 731) ensina: "No dia de Pentecostes, o Espírito Santo é derramado sem medida: O Espírito habita na Igreja, a santifica, guia para toda a verdade, a unifica na comunhão e no ministério, a instrui e a governa com diferentes dons hierárquicos e carismáticos."' },
+                        ],
+                        cic: 'CIC 731 — 747',
+                    },
+                    {
+                        ano: '33–67 d.C.', tipo: 't-fundacao', categoria: 'Apostolado',
+                        titulo: 'São Pedro — O Primeiro Papa',
+                        resumo: 'Jesus confia a Pedro as "chaves do Reino" (Mt 16,18-19). Pedro lidera a Igreja em Jerusalém e depois em Roma.',
+                        detalhe: [
+                            { titulo: 'A promessa de Cristo', texto: 'Jesus disse a Simão: "Tu és Pedro, e sobre esta pedra edificarei a minha Igreja, e as portas do inferno não prevalecerão contra ela. Dar-te-ei as chaves do Reino dos Céus" (Mt 16,18-19). Este texto é a base bíblica do primado papal segundo o ensinamento católico.' },
+                            { titulo: 'Missão e martírio', texto: 'Pedro presidiu a comunidade de Jerusalém e, depois de Antioquia, fixou-se em Roma, que se tornaria a sede da Igreja. Foi martirizado por crucificação invertida — a seu pedido, pois não se considerava digno de morrer como Cristo — por volta do ano 64-67 d.C., sob o imperador Nero. Sua tumba está sob a Basílica de São Pedro no Vaticano.' },
+                        ],
+                        cic: 'CIC 880 — 882',
+                    },
+                    {
+                        ano: '50 d.C.', tipo: 't-concilio', categoria: 'Concílio',
+                        titulo: 'Concílio de Jerusalém — O Primeiro Concílio',
+                        resumo: 'Os apóstolos decidem que os gentios convertidos não precisam seguir a Lei de Moisés. Marco da universalidade da Igreja.',
+                        detalhe: [
+                            { titulo: 'A questão central', texto: 'Surgiu na Igreja primitiva uma controvérsia: os cristãos vindos do judaísmo exigiam que os gentios convertidos fossem circuncidados e seguissem a Lei de Moisés. Paulo e Barnabé foram a Jerusalém debater com Pedro, Tiago e os outros apóstolos.' },
+                            { titulo: 'A decisão apostólica', texto: 'O Concílio decidiu, sob a liderança de Pedro e Tiago, que os gentios não precisavam cumprir a Lei mosaica — apenas três requisitos básicos relacionados a práticas idolátricas. Esta decisão é narrada em Atos 15 e marca a abertura definitiva do Evangelho a todos os povos, independente de origem.' },
+                            { titulo: 'Importância histórica', texto: 'O Concílio de Jerusalém estabeleceu o modelo de como a Igreja resolve controvérsias doutrinárias: os bispos reunidos com o sucessor de Pedro, sob a guia do Espírito Santo. Este modelo seria seguido por todos os 21 Concílios Ecumênicos posteriores.' },
+                        ],
+                        cic: 'CIC 1 — 3',
+                    },
+                    {
+                        ano: '64–313 d.C.', tipo: 't-martir', categoria: 'Martírio',
+                        titulo: 'As Perseguições do Império Romano',
+                        resumo: 'Dez grandes perseguições imperiais. O sangue dos mártires fortalece a Igreja. "O sangue dos mártires é semente de cristãos" (Tertuliano).',
+                        detalhe: [
+                            { titulo: 'As perseguições', texto: 'A partir de Nero (64 d.C.), os cristãos sofreram dez grandes perseguições imperiais. Foram acusados de ateísmo (por não adorar os deuses romanos), de canibalismo (confusão com a Eucaristia) e de subversão. Os cristãos eram lançados às feras, queimados, decapitados e crucificados.' },
+                            { titulo: 'Os mártires', texto: 'Grandes mártires dessa época: Santo Estêvão (primeiro mártir, 34 d.C.), São Pedro e São Paulo (64-67 d.C.), São Inácio de Antioquia (110 d.C.), Santo Policarpo (155 d.C.) e Santa Cecília. O martírio era visto como o testemunho supremo da fé.' },
+                            { titulo: 'O paradoxo do crescimento', texto: 'Em vez de exterminar o cristianismo, as perseguições o fortaleceram e espalharam. Tertuliano (séc. III) escreveu: "Quanto mais nos ceifais, mais somos: o sangue dos cristãos é semente." Em 313 d.C., o próprio Império Romano reconheceu a liberdade dos cristãos.' },
+                        ],
+                        cic: 'CIC 2473 — 2474',
+                    },
+                ]
+            },
+            {
+                id: 'patristicos',
+                titulo: 'Era Patrística e dos Concílios',
+                periodo: 'Séculos III – IX d.C.',
+                cor: '#C9A84C',
+                eventos: [
+                    {
+                        ano: '313 d.C.', tipo: 't-expansao', categoria: 'Liberdade',
+                        titulo: 'Édito de Milão — Fim das Perseguições',
+                        resumo: 'O imperador Constantino concede liberdade religiosa aos cristãos. A Igreja sai das catacumbas para o mundo.',
+                        detalhe: [
+                            { titulo: 'O Édito histórico', texto: 'Em 313 d.C., o Imperador Constantino e seu co-imperador Licínio emitiram o Édito de Milão, concedendo liberdade de culto a todos os habitantes do Império Romano, incluindo os cristãos. As perseguições cessaram oficialmente.' },
+                            { titulo: 'A transformação', texto: 'Constantino devolveu os bens confiscados às igrejas, construiu grandes basílicas (incluindo a primitiva Basílica de São Pedro) e participou do Concílio de Niceia em 325 d.C. O Imperador foi batizado pouco antes de morrer, em 337 d.C.' },
+                            { titulo: 'Impacto na Igreja', texto: 'A liberdade permitiu que a Igreja se organizasse melhor, construísse igrejas, estabelecesse estruturas pastorais e missionárias. Surgiram os grandes teólogos e Padres da Igreja que definiram a doutrina cristã nos séculos seguintes.' },
+                        ],
+                        cic: 'CIC 2104 — 2109',
+                    },
+                    {
+                        ano: '325 d.C.', tipo: 't-concilio', categoria: 'Concílio Ecumênico',
+                        titulo: 'Concílio de Niceia I — Divindade de Cristo',
+                        resumo: 'Primeiro Concílio Ecumênico. Condena o arianismo e define que Cristo é "consubstancial ao Pai". Origem do Credo Niceno.',
+                        detalhe: [
+                            { titulo: 'O arianismo', texto: 'Ário, presbítero de Alexandria, ensinava que o Filho de Deus foi "criado" pelo Pai, sendo portanto inferior a ele — uma criatura, não Deus verdadeiro. Esta heresia se espalhou rapidamente pelo Império e ameaçava a fé da Igreja.' },
+                            { titulo: 'A definição de Niceia', texto: 'O Concílio, convocado por Constantino em 325 d.C., reuniu 318 bispos. Definiu que o Filho é "homoousios" (consubstancial, da mesma substância) com o Pai — verdadeiro Deus de verdadeiro Deus. O arianismo foi condenado como heresia.' },
+                            { titulo: 'O Credo Niceno', texto: 'O Concílio produziu o Credo Niceno-Constantinopolitano, que recitamos ainda hoje na Missa: "Creio num só Deus, Pai todo-poderoso... e em um só Senhor Jesus Cristo, Filho unigênito de Deus, nascido do Pai antes de todos os séculos, Deus de Deus, Luz da Luz, Deus verdadeiro de Deus verdadeiro, gerado, não criado, consubstancial ao Pai..."' },
+                        ],
+                        cic: 'CIC 465',
+                    },
+                    {
+                        ano: '431 d.C.', tipo: 't-doutrina', categoria: 'Concílio Ecumênico',
+                        titulo: 'Concílio de Éfeso — Maria, Mãe de Deus',
+                        resumo: 'Define que Maria é "Theotókos" (Mãe de Deus). Condena o nestorianismo. Marco fundamental da devoção mariana.',
+                        detalhe: [
+                            { titulo: 'A controvérsia nestoriana', texto: 'Nestório, Patriarca de Constantinopla, ensinava que em Cristo havia duas pessoas distintas — uma divina e outra humana — e por isso Maria seria apenas "mãe de Cristo" (Christotókos), não mãe de Deus. Esta doutrina dividia a pessoa de Cristo.' },
+                            { titulo: 'A definição dogmática', texto: 'O Concílio de Éfeso (431 d.C.), sob São Cirilo de Alexandria, definiu que Maria é "Theotókos" — Mãe de Deus — porque Jesus Cristo é uma única Pessoa divina que assumiu a natureza humana. Portanto, quem Maria gerou é o próprio Filho de Deus.' },
+                            { titulo: 'Impacto na devoção mariana', texto: 'A definição de Éfeso deu um impulso extraordinário à devoção a Maria em toda a Igreja. Surgiram as primeiras grandes basílicas dedicadas à Virgem, as litanias e hinos marianos multiplicaram-se. O Catecismo (CIC 495) reafirma: "Maria é verdadeiramente Mãe de Deus, pois é mãe do eterno Filho de Deus feito homem, que é ele mesmo Deus."' },
+                        ],
+                        cic: 'CIC 495 — 507',
+                    },
+                    {
+                        ano: '382–420 d.C.', tipo: 't-doutrina', categoria: 'Escritura',
+                        titulo: 'São Jerônimo e a Vulgata',
+                        resumo: 'São Jerônimo traduz a Bíblia completa para o latim (Vulgata), tornando-a acessível ao Ocidente por mil anos.',
+                        detalhe: [
+                            { titulo: 'O maior biblista da Antiguidade', texto: 'São Jerônimo (347-420 d.C.) foi encarregado pelo Papa Dâmaso I de traduzir a Bíblia do hebraico e grego para o latim. Trabalhou por décadas em Belém, consultando manuscritos hebraicos diretamente e produzindo uma tradução de extraordinária qualidade.' },
+                            { titulo: 'A Vulgata', texto: 'A tradução de Jerônimo, chamada Vulgata (do latim "vulgata editio" = edição popular), tornou-se a Bíblia oficial da Igreja Latina por mais de mil anos. O Concílio de Trento (1546) a declarou autêntica para uso litúrgico. A edição revisada (Nova Vulgata) continua sendo a versão oficial latina da Igreja.' },
+                            { titulo: 'O cânon católico', texto: 'A Vulgata inclui os 73 livros do cânon católico — 46 do Antigo Testamento (incluindo os 7 deuterocanônicos: Tobias, Judite, 1-2 Macabeus, Sabedoria, Eclesiástico e Baruc) e 27 do Novo Testamento. O cânon foi definitivamente fixado pelo Concílio de Trento.' },
+                        ],
+                        cic: 'CIC 120',
+                    },
+                    {
+                        ano: '529 d.C.', tipo: 't-expansao', categoria: 'Monaquismo',
+                        titulo: 'São Bento e a Regra Beneditina',
+                        resumo: 'São Bento funda Monte Cassino e escreve a Regra: "Ora et Labora". Os mosteiros tornam-se centros de civilização cristã na Europa.',
+                        detalhe: [
+                            { titulo: 'O Pai do Monaquismo Ocidental', texto: 'São Bento de Núrsia (480-547 d.C.) fundou o mosteiro de Monte Cassino, na Itália, e escreveu a famosa "Regra de São Bento" — um documento que organiza a vida monástica em torno de três votos (obediência, estabilidade e conversão dos costumes) e do princípio "Ora et Labora" (reza e trabalha).' },
+                            { titulo: 'Os mosteiros como centros de civilização', texto: 'Os mosteiros beneditinos tornaram-se os grandes centros culturais, científicos e agrícolas da Europa medieval. Foram os monges que preservaram os manuscritos da Antiguidade, desenvolveram técnicas agrícolas, cuidaram dos doentes e evangelizaram os povos bárbaros da Europa.' },
+                            { titulo: 'Legado perene', texto: 'O Papa Paulo VI proclamou São Bento Padroeiro da Europa em 1964. A Ordem Beneditina, com seus inúmeros mosteiros espalhados pelo mundo, continua sua missão de oração e trabalho. A Medalha de São Bento é um dos sacramentais mais populares do catolicismo.' },
+                        ],
+                        cic: 'CIC 927',
+                    },
+                    {
+                        ano: '1054 d.C.', tipo: 't-doutrina', categoria: 'Cisma',
+                        titulo: 'Grande Cisma do Oriente',
+                        resumo: 'Separação formal entre a Igreja de Roma e a Igreja de Constantinopla. Surgem as Igrejas Católica e Ortodoxa.',
+                        detalhe: [
+                            { titulo: 'As tensões acumuladas', texto: 'Por séculos, acumularam-se tensões entre Roma e Constantinopla: disputas sobre a autoridade do Papa, diferenças litúrgicas (uso de pão ázimo no Ocidente), a questão do "Filioque" no Credo (o Espírito procede do Pai "e do Filho"?) e rivalidades políticas entre o Império Romano do Ocidente e do Oriente.' },
+                            { titulo: 'A ruptura formal', texto: 'Em 1054 d.C., o Cardeal Humberto, legado papal, depositou uma bula de excomunhão sobre o altar de Santa Sofia em Constantinopla contra o Patriarca Miguel Cerulário, que respondeu com a excomunhão do legado. Esta troca de excomunhões marcou a separação formal — embora o processo tenha sido gradual.' },
+                            { titulo: 'Reconciliação em curso', texto: 'Em 1964, o Papa Paulo VI e o Patriarca Atenágoras I levantaram mutuamente as excomunhões de 1054. O diálogo ecumênico entre católicos e ortodoxos avançou significativamente, embora a plena comunhão ainda não tenha sido restaurada. O Catecismo (CIC 838) reconhece os ortodoxos como Igrejas com quem a Igreja Católica mantém vínculos profundos.' },
+                        ],
+                        cic: 'CIC 838',
+                    },
+                ]
+            },
+            {
+                id: 'medieval',
+                titulo: 'Idade Média',
+                periodo: 'Séculos X – XV',
+                cor: '#993C1D',
+                eventos: [
+                    {
+                        ano: '1095–1291', tipo: 't-expansao', categoria: 'História',
+                        titulo: 'As Cruzadas',
+                        resumo: 'Expedições militares para recuperar a Terra Santa. Contexto complexo de fé, política e violência que a Igreja hoje reconhece com autocrítica.',
+                        detalhe: [
+                            { titulo: 'O contexto histórico', texto: 'Em 1095, o Papa Urbano II convocou a Primeira Cruzada após o apelo do Imperador Bizantino Aleixo I, que temia a expansão turca seldjúcida. O objetivo declarado era recuperar Jerusalém e proteger os cristãos do Oriente. Mais de 100.000 cruzados partiram para o Oriente.' },
+                            { titulo: 'Luzes e sombras', texto: 'As Cruzadas apresentam aspectos complexos: por um lado, havia genuína devoção e desejo de proteger os cristãos orientais; por outro, houve violência extrema, saques (inclusive de Constantinopla em 1204), perseguições a judeus e muçulmanos e motivações políticas e econômicas misturadas à fé.' },
+                            { titulo: 'O pedido de perdão da Igreja', texto: 'O Papa João Paulo II, no Grande Jubileu do ano 2000, pediu publicamente perdão pelos pecados cometidos em nome da Igreja ao longo da história, incluindo as violências das Cruzadas. A Igreja reconhece que atos contrários ao Evangelho foram cometidos, ainda que em contextos históricos complexos.' },
+                        ],
+                        cic: 'CIC 2298',
+                    },
+                    {
+                        ano: '1209 d.C.', tipo: 't-expansao', categoria: 'Ordens Religiosas',
+                        titulo: 'São Francisco e os Franciscanos',
+                        resumo: 'Francisco de Assis funda a Ordem dos Frades Menores. A pobreza radical e o amor à criação renovam a Igreja medieval.',
+                        detalhe: [
+                            { titulo: 'A conversão de Francisco', texto: 'Francisco de Assis (1181-1226) era filho de um rico comerciante. Após uma experiência mística diante de um crucifixo na igrejinha de São Damião — onde ouviu: "Francisco, vai e repara minha Igreja" — abandonou tudo e abraçou a pobreza radical como estilo de vida evangélico.' },
+                            { titulo: 'A Ordem dos Frades Menores', texto: 'Em 1209, Francisco levou seus primeiros doze companheiros a Roma, onde o Papa Inocêncio III aprovou verbalmente a Regra Franciscana. A Ordem cresceu rapidamente, tornando-se um poderoso instrumento de evangelização nas cidades medievais e renovação da vida da Igreja.' },
+                            { titulo: 'Os estigmas e o legado', texto: 'Em 1224, Francisco recebeu os estigmas de Cristo no Monte Alverne — o primeiro estigmatizado conhecido da história. Morreu em 1226, cantando. Seu Cântico das Criaturas é considerado o primeiro grande poema da literatura italiana. Santa Clara, sua discípula, fundou as Clarissas.' },
+                        ],
+                        cic: 'CIC 929',
+                    },
+                    {
+                        ano: '1215 d.C.', tipo: 't-concilio', categoria: 'Concílio Ecumênico',
+                        titulo: 'Concílio de Latrão IV — A Transubstanciação',
+                        resumo: 'Define oficialmente a doutrina da Transubstanciação: o pão e o vinho se tornam verdadeiramente o Corpo e Sangue de Cristo na Eucaristia.',
+                        detalhe: [
+                            { titulo: 'O maior Concílio medieval', texto: 'O IV Concílio de Latrão (1215), convocado pelo Papa Inocêncio III, foi o maior Concílio da Idade Média, reunindo mais de 400 bispos e 800 abades. Emitiu 70 decretos sobre doutrina, disciplina eclesiástica e vida dos cristãos.' },
+                            { titulo: 'A definição da Transubstanciação', texto: 'O Concílio usou pela primeira vez o termo "transubstanciação" para definir o que ocorre na consagração eucarística: o pão e o vinho se convertem verdadeiramente no Corpo e Sangue de Cristo, ainda que as aparências externas permaneçam. Esta doutrina foi reafirmada pelo Concílio de Trento.' },
+                            { titulo: 'O que diz o Catecismo', texto: 'O Catecismo (CIC 1376) ensina: "Por isso Cristo está presente neste sacramento de modo muito especial: Deus e homem, plena e integralmente no pão e no vinho. (...) Esta conversão do pão e do vinho no Corpo e Sangue de Cristo, o Santo Concílio de Trento chama, de maneira conveniente e própria, de Transubstanciação."' },
+                        ],
+                        cic: 'CIC 1376',
+                    },
+                    {
+                        ano: '1274 d.C.', tipo: 't-doutrina', categoria: 'Teologia',
+                        titulo: 'São Tomás de Aquino e a Suma Teológica',
+                        resumo: 'O maior teólogo da Igreja medievall sintetiza fé e razão. A Suma Teológica permanece referência fundamental da teologia católica.',
+                        detalhe: [
+                            { titulo: 'O Doutor Angélico', texto: 'Tomás de Aquino (1225-1274) foi o maior filósofo e teólogo da Idade Média. Estudante de Alberto Magno em Paris e Colônia, tornou-se professor de teologia em Paris e Nápoles. Sua obra sintetiza a filosofia aristotélica com a teologia cristã de maneira extraordinária.' },
+                            { titulo: 'A Suma Teológica', texto: 'A Suma Teológica é um tratado sistemático da fé cristã em três partes: Deus e a criação; o ser humano e sua destinação a Deus; Cristo e os sacramentos. Contém mais de 3.000 artigos com objeções, respostas e argumentos. Ficou inacabada: próximo da morte, Tomás disse que tudo que escrevera lhe parecia "palha".' },
+                            { titulo: 'Patrono das escolas e universidades', texto: 'O Papa Leão XIII, na encíclica Aeterni Patris (1879), recomendou o método de Tomás de Aquino como guia para a filosofia e teologia católicas. São Tomás é patrono das universidades católicas e dos estudantes. O Catecismo cita-o extensamente como autoridade teológica.' },
+                        ],
+                        cic: 'CIC 43',
+                    },
+                ]
+            },
+            {
+                id: 'moderna',
+                titulo: 'Idade Moderna',
+                periodo: 'Séculos XV – XIX',
+                cor: '#854F0B',
+                eventos: [
+                    {
+                        ano: '1517 d.C.', tipo: 't-reforma', categoria: 'Reforma Protestante',
+                        titulo: 'A Reforma Protestante',
+                        resumo: 'Martinho Lutero publica as 95 teses. A unidade cristã do Ocidente se rompe. A Igreja responde com a Contrarreforma.',
+                        detalhe: [
+                            { titulo: 'As causas', texto: 'A Reforma Protestante de Lutero (1517) foi desencadeada por abusos reais dentro da Igreja: venda de indulgências, corrupção clerical, ignorância religiosa do povo. Lutero defendia que a salvação se dá pela fé somente ("sola fide"), pela Escritura somente ("sola Scriptura") e rejeitava a autoridade do Papa.' },
+                            { titulo: 'A ruptura', texto: 'Após a excomunhão de Lutero em 1521, o movimento se espalhou rapidamente pela Alemanha, Suíça (Calvino, Zuínglio) e norte da Europa. A unidade cristã do Ocidente foi rompida, surgindo as confissões protestantes: luterana, reformada, anglicana e outras.' },
+                            { titulo: 'A resposta católica', texto: 'A Igreja respondeu com a Contrarreforma, cujo ponto culminante foi o Concílio de Trento (1545-1563), que reformou internamente a Igreja, reafirmou as doutrinas contestadas e criou os seminários para formação do clero. Grandes santos dessa época: Inácio de Loyola, Teresa de Ávila, João da Cruz, Carlos Borromeo e Francisco de Sales.' },
+                        ],
+                        cic: 'CIC 817 — 819',
+                    },
+                    {
+                        ano: '1545–1563', tipo: 't-concilio', categoria: 'Concílio Ecumênico',
+                        titulo: 'Concílio de Trento — A Contrarreforma',
+                        resumo: 'O maior Concílio antes do Vaticano II. Reafirma os 7 Sacramentos, a Tradição, a Transubstanciação e reforma internamente a Igreja.',
+                        detalhe: [
+                            { titulo: 'O Concílio mais longo', texto: 'O Concílio de Trento (1545-1563) foi o Concílio Ecumênico mais longo da história: 18 anos de trabalho (com interrupções), convocado pelo Papa Paulo III. Reuniu-se em três fases distintas sob três papas.' },
+                            { titulo: 'Definições doutrinárias', texto: 'Trento reafirmou e clarificou as doutrinas atacadas pelos protestantes: a Sagrada Tradição como fonte de Revelação ao lado da Escritura; os sete sacramentos; a transubstanciação eucarística; o sacrifício da Missa; o Purgatório; o culto aos santos e a veneração das relíquias; as indulgências (condenando seus abusos).' },
+                            { titulo: 'Reforma interna', texto: 'Trento promoveu profunda reforma interna: criou os seminários para formação clerical, estabeleceu normas para a disciplina dos bispos e sacerdotes, proibiu a simonia e o pluralismo de benefícios, e padronizou a liturgia na Missa Tridentina — que permaneceu a forma ordinária até o Concílio Vaticano II.' },
+                        ],
+                        cic: 'CIC 1376',
+                    },
+                    {
+                        ano: '1540 d.C.', tipo: 't-expansao', categoria: 'Missões',
+                        titulo: 'Santo Inácio de Loyola e os Jesuítas',
+                        resumo: 'Fundação da Companhia de Jesus. Os jesuítas levam o Evangelho às Américas, à Ásia e à África, evangelizando com inteligência e cultura.',
+                        detalhe: [
+                            { titulo: 'A conversão de Inácio', texto: 'Inácio de Loyola (1491-1556), militar espanhol, converteu-se durante uma longa convalescença após ser ferido em batalha. Lendo vidas de santos, sentiu-se chamado a ser "soldado de Cristo". Peregrinou à Terra Santa e estudou teologia em Paris.' },
+                            { titulo: 'A Companhia de Jesus', texto: 'Em 1540, o Papa Paulo III aprovou oficialmente a Companhia de Jesus. Os jesuítas fizeram um quarto voto especial de obediência ao Papa para missões. Tornaram-se os principais missionários da Contrarreforma e da evangelização nos novos mundos descobertos.' },
+                            { titulo: 'A evangelização global', texto: 'São Francisco Xavier evangelizou a Índia e o Japão. Matteo Ricci entrou na China imperial. José de Anchieta e Manuel da Nóbrega evangelizaram o Brasil. Os jesuítas fundaram universidades, colégios e as famosas "Reduções" do Paraguai, onde viviam os índios guaranis em comunidades cristãs.' },
+                        ],
+                        cic: 'CIC 927',
+                    },
+                    {
+                        ano: '1858 d.C.', tipo: 't-doutrina', categoria: 'Aparição',
+                        titulo: 'Aparições de Lourdes — Santa Bernadette',
+                        resumo: 'Nossa Senhora aparece a Bernadette Soubirous e revela: "Eu sou a Imaculada Conceição." Lourdes torna-se o maior santuário mariano do mundo.',
+                        detalhe: [
+                            { titulo: 'As aparições', texto: 'Entre 11 de fevereiro e 16 de julho de 1858, Nossa Senhora apareceu 18 vezes à jovem Bernadette Soubirous, de 14 anos, na Gruta de Massabielle, em Lourdes, no sul da França. Na aparição de 25 de março, a "Senhora" revelou seu nome: "Eu sou a Imaculada Conceição" — confirmando o dogma proclamado pelo Papa Pio IX em 1854.' },
+                            { titulo: 'A fonte milagrosa', texto: 'Nossa Senhora pediu a Bernadette que cavasse na terra. Surgiu uma fonte de água, associada a numerosas curas. A Igreja reconheceu oficialmente 70 curas como milagrosas, inexplicáveis pela medicina. Milhões de doentes e peregrinos visitam Lourdes anualmente.' },
+                            { titulo: 'Bernadette', texto: 'Bernadette entrou para o convento das Irmãs de Nossa Senhora em Nevers, onde viveu em extrema humildade e sofrimento físico. Morreu em 1879. Foi canonizada em 1933 pelo Papa Pio XI. Seu corpo permanece incorrupto no convento de Nevers.' },
+                        ],
+                        cic: 'CIC 973',
+                    },
+                ]
+            },
+            {
+                id: 'contemporanea',
+                titulo: 'Era Contemporânea',
+                periodo: 'Séculos XX – XXI',
+                cor: '#185FA5',
+                eventos: [
+                    {
+                        ano: '1917 d.C.', tipo: 't-doutrina', categoria: 'Aparição',
+                        titulo: 'Aparições de Fátima',
+                        resumo: 'Nossa Senhora aparece a três pastorzinhos em Fátima, Portugal. Pede oração, penitência e consagração da Rússia. O Milagre do Sol testemunhado por 70 mil pessoas.',
+                        detalhe: [
+                            { titulo: 'As aparições', texto: 'Entre 13 de maio e 13 de outubro de 1917, Nossa Senhora apareceu seis vezes a Lúcia dos Santos (10 anos) e seus primos Francisco (9) e Jacinta Marto (7) na Cova da Iria, em Fátima, Portugal. A mensagem central: rezar o Rosário pela paz, fazer penitência pelos pecadores e a consagração da Rússia ao Coração Imaculado de Maria.' },
+                            { titulo: 'Os Três Segredos', texto: 'Nossa Senhora revelou três segredos: uma visão do inferno (1.º segredo), a promessa de que a Rússia seria consagrada a seu Coração Imaculado (2.º), e uma visão profética de um "Bispo vestido de branco" sendo atingido — que o Vaticano revelou em 2000 como referência ao atentado contra João Paulo II em 1981 (3.º segredo).' },
+                            { titulo: 'O Milagre do Sol', texto: 'Em 13 de outubro de 1917, mais de 70.000 pessoas — incluindo jornalistas céticos e não-crentes — testemunharam o "Milagre do Sol": o astro pareceu girar e precipitar-se sobre a multidão, que ficou completamente seca após horas de chuva. Foi reportado em jornais portugueses de diversas tendências políticas.' },
+                        ],
+                        cic: 'CIC 2683',
+                    },
+                    {
+                        ano: '1962–1965', tipo: 't-concilio', categoria: 'Concílio Ecumênico',
+                        titulo: 'Concílio Vaticano II — A Igreja no Mundo Moderno',
+                        resumo: 'O 21.º e último Concílio Ecumênico. Convocado por João XXIII, renovação litúrgica, ecumenismo e diálogo com o mundo moderno.',
+                        detalhe: [
+                            { titulo: 'O "Aggiornamento"', texto: 'O Papa João XXIII convocou o Concílio Vaticano II (1962-1965) para promover o "aggiornamento" — atualização da Igreja no diálogo com o mundo moderno. Foi o maior Concílio da história, reunindo mais de 2.500 bispos de todo o mundo.' },
+                            { titulo: 'Os documentos', texto: 'O Concílio produziu 16 documentos, incluindo a Constituição "Sacrosanctum Concilium" (reforma litúrgica — introdução do vernáculo na Missa), "Lumen Gentium" (a Igreja como Povo de Deus), "Gaudium et Spes" (a Igreja no mundo contemporâneo) e o decreto "Unitatis Redintegratio" (ecumenismo).' },
+                            { titulo: 'A renovação litúrgica', texto: 'A reforma litúrgica foi o fruto mais visível do Concílio: a Missa passou a ser celebrada em língua vernácula (o povo voltado para o padre), com maior participação dos fiéis. O Novus Ordo Missae foi introduzido em 1969 pelo Papa Paulo VI. O Papa Bento XVI permitiu em 2007 o uso ampliado do rito anterior (Forma Extraordinária).' },
+                        ],
+                        cic: 'CIC 1 — 2',
+                    },
+                    {
+                        ano: '1978–2005', tipo: 't-papa', categoria: 'Pontificado',
+                        titulo: 'São João Paulo II — O Papa do Milênio',
+                        resumo: 'Karol Wojtyla, primeiro papa polonês. Sobreviveu ao atentado de 1981, contribuiu para a queda do comunismo, criou os Mistérios Luminosos e publicou o Catecismo.',
+                        detalhe: [
+                            { titulo: 'O papa polonês', texto: 'Karol Józef Wojtyła (1920-2005), eleito em 1978, foi o primeiro papa não italiano em 455 anos e o primeiro eslavo da história. Seu pontificado de 26 anos é um dos mais longos e impactantes da história da Igreja.' },
+                            { titulo: 'Marcos do pontificado', texto: 'João Paulo II viajou a 129 países — mais que todos os papas anteriores juntos. Beatificou e canonizou mais pessoas que todos os seus predecessores somados. Em 1992, publicou o Catecismo da Igreja Católica. Em 2002, acrescentou os Mistérios Luminosos ao Rosário. Pediu perdão pelos pecados históricos da Igreja no Jubileu do ano 2000.' },
+                            { titulo: 'Atentado e queda do comunismo', texto: 'Sobreviveu a um atentado em 13 de maio de 1981 (Dia de Fátima) na Praça de São Pedro. Atribuiu sua sobrevivência a Nossa Senhora de Fátima. Seu papel foi decisivo na queda do comunismo no Leste Europeu, apoiando o movimento Solidariedade na Polônia. Foi beatificado em 2011 e canonizado em 2014.' },
+                        ],
+                        cic: 'CIC 1 — 3',
+                    },
+                    {
+                        ano: '1992 d.C.', tipo: 't-doutrina', categoria: 'Doutrina',
+                        titulo: 'Catecismo da Igreja Católica',
+                        resumo: 'O Papa João Paulo II publica o Catecismo da Igreja Católica (CIC) — a síntese oficial da fé católica. Referência para toda a catequese universal.',
+                        detalhe: [
+                            { titulo: 'A origem', texto: 'O Concílio Vaticano II pediu que fosse elaborado um catecismo atualizado para a Igreja universal. Uma comissão de cardeais e bispos, presidida pelo Cardeal Joseph Ratzinger (futuro Bento XVI), trabalhou por seis anos no texto. Em 1992, o Papa João Paulo II o promulgou pela Constituição Apostólica "Fidei Depositum".' },
+                            { titulo: 'A estrutura', texto: 'O Catecismo está dividido em quatro partes: A Profissão da Fé (o Credo); A Celebração do Mistério Cristão (os Sacramentos); A Vida em Cristo (os Mandamentos e a moral); A Oração Cristã (o Pai Nosso). Contém 2.865 parágrafos numerados, com remissões à Escritura, à Tradição e ao Magistério.' },
+                            { titulo: 'Importância', texto: 'O Catecismo é considerado o documento magisterial mais importante do século XX. Traduzido em mais de 40 idiomas, é a referência oficial para a catequese em todo o mundo. O Compêndio do Catecismo (2005), em forma de perguntas e respostas, foi publicado pelo Papa Bento XVI para facilitar seu uso.' },
+                        ],
+                        cic: 'CIC 1 — 4',
+                    },
+                    {
+                        ano: '2013–hoje', tipo: 't-papa', categoria: 'Pontificado',
+                        titulo: 'Papa Francisco — A Igreja em Saída',
+                        resumo: 'Jorge Mario Bergoglio, primeiro papa americano e jesuíta. Papado centrado nos pobres, no meio ambiente (Laudato Si) e na misericórdia (Amoris Laetitia).',
+                        detalhe: [
+                            { titulo: 'O papa das periferias', texto: 'Jorge Mario Bergoglio (1936), arcebispo de Buenos Aires, foi eleito Papa em 13 de março de 2013, após a renúncia de Bento XVI. É o primeiro papa americano, o primeiro jesuíta e o primeiro a escolher o nome Francisco — em homenagem a São Francisco de Assis.' },
+                            { titulo: 'Os documentos', texto: 'As principais publicações do pontificado: "Evangelii Gaudium" (2013) — chamado à nova evangelização e à "Igreja em saída"; "Laudato Si" (2015) — encíclica sobre o meio ambiente e ecologia integral; "Amoris Laetitia" (2016) — exortação sobre a família; "Laudate Deum" (2023) — apelo à ação climática.' },
+                            { titulo: 'A misericórdia como centro', texto: 'O pontificado de Francisco tem como tema central a misericórdia de Deus. Convocou o Jubileo Extraordinário da Misericórdia (2015-2016). Canonizou os Pastorinhos de Fátima (Francisco e Jacinta Marto) em 2017. Incentivou a reforma da Cúria Romana com a Constituição Apostólica "Praedicate Evangelium" (2022).' },
+                        ],
+                        cic: 'CIC 270',
+                    },
+                ]
+            },
+        ];
+
+        // ===== RENDER =====
+        let eraAtiva = 'todas';
+
+        function filtrarEra(era, btn) {
+            eraAtiva = era;
+            document.querySelectorAll('.era-btn').forEach(b => b.classList.remove('ativo'));
+            btn.classList.add('ativo');
+            renderTimeline();
+        }
+
+        function renderTimeline() {
+            const tl = document.getElementById('timeline');
+            tl.innerHTML = '';
+
+            const epocasFiltradas = eraAtiva === 'todas'
+                ? epocas
+                : epocas.filter(e => e.id === eraAtiva);
+
+            epocasFiltradas.forEach(ep => {
+                // Cabeçalho da época
+                const hdr = document.createElement('div');
+                hdr.className = 'epoca-header';
+                hdr.innerHTML = `
+        <div class="epoca-pill" style="background:${ep.cor}">${ep.titulo}</div>
+        <div class="epoca-linha"></div>
+        <div style="font-size:11px;color:var(--cinza-texto);white-space:nowrap;">${ep.periodo}</div>`;
+                tl.appendChild(hdr);
+
+                // Eventos
+                ep.eventos.forEach(ev => {
+                    const el = document.createElement('div');
+                    el.className = `evento ${ev.tipo}`;
+                    el.innerHTML = `
+          <div class="evento-esquerda">
+            <div class="evento-bolinha"></div>
+            <div class="evento-ano">${ev.ano.replace(' d.C.', '<br>d.C.').replace('–', '–<br>')}</div>
+          </div>
+          <div class="evento-direita">
+            <div class="evento-categoria">${ev.categoria}</div>
+            <div class="evento-titulo">${ev.titulo}</div>
+            <div class="evento-resumo">${ev.resumo}</div>
+            <div class="evento-mais">Saiba mais →</div>
+          </div>`;
+                    el.onclick = () => abrirDetalhe(ev, ep.cor);
+                    tl.appendChild(el);
+                });
+            });
+        }
+
+        // ===== DETALHE =====
+        function abrirDetalhe(ev, cor) {
+            const overlay = document.getElementById('detalhe-overlay');
+            const topo = document.getElementById('detalhe-topo');
+            topo.style.background = `linear-gradient(135deg, ${escurecer(cor)}, ${cor})`;
+            document.getElementById('d-ano').textContent = ev.ano + (ev.cic ? ' · ' + ev.cic : '');
+            document.getElementById('d-titulo').textContent = ev.titulo;
+            overlay.classList.add('aberto');
+
+            const corpo = document.getElementById('detalhe-corpo');
+            let html = '';
+
+            // Resumo em destaque
+            html += `<div class="detalhe-secao" style="border-top:3px solid ${cor};">
+      <div class="detalhe-secao-titulo" style="color:${cor};">✦ Visão geral</div>
+      <p>${ev.resumo}</p>
+    </div>`;
+
+            // Seções detalhadas
+            ev.detalhe.forEach(sec => {
+                html += `<div class="detalhe-secao">
+        <div class="detalhe-secao-titulo" style="color:${cor};">✦ ${sec.titulo}</div>
+        <p>${sec.texto}</p>
+      </div>`;
+            });
+
+            // Referência do Catecismo
+            if (ev.cic) {
+                html += `<div class="cic-ref">
+        📖 <strong>Referência no Catecismo:</strong> ${ev.cic}<br>
+        O Catecismo da Igreja Católica (CIC) é a fonte doutrinária oficial da Igreja Católica, publicado em 1992 pelo Papa João Paulo II.
+      </div>`;
+            }
+
+            corpo.innerHTML = html;
+            corpo.scrollTop = 0;
+        }
+
+        function fecharDetalhe() {
+            document.getElementById('detalhe-overlay').classList.remove('aberto');
+        }
+
+        // Escurece uma cor hex para o gradiente
+        function escurecer(hex) {
+            try {
+                let r = parseInt(hex.slice(1, 3), 16);
+                let g = parseInt(hex.slice(3, 5), 16);
+                let b = parseInt(hex.slice(5, 7), 16);
+                r = Math.max(0, r - 40); g = Math.max(0, g - 40); b = Math.max(0, b - 40);
+                return `#${r.toString(16).padStart(2, '0')}${g.toString(16).padStart(2, '0')}${b.toString(16).padStart(2, '0')}`;
+            } catch { return hex; }
+        }
+
+        renderTimeline();
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,824 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Santo Terço — Jovens Luz do Mundo</title>
+  <link rel="stylesheet" href="../css/style.css" />
+  <link rel="icon" type="image/svg+xml" href="../img/gemini-svg.svg" />
+
+
+  <style>
+    /* ===== SELEÇÃO DE TERÇO ===== */
+    .terco-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px;
+      padding: 16px 16px 0;
+    }
+
+    .terco-card {
+      border-radius: var(--raio);
+      padding: 18px 14px;
+      cursor: pointer;
+      transition: var(--transicao);
+      border: 2px solid transparent;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .terco-card:hover {
+      transform: translateY(-2px);
+    }
+
+    .terco-card.gozoso {
+      background: linear-gradient(135deg, #fff8e1, #fffde7);
+      border-color: #F9C840;
+    }
+
+    .terco-card.luminoso {
+      background: linear-gradient(135deg, #e3f2fd, #e8f4ff);
+      border-color: #90CAF9;
+    }
+
+    .terco-card.doloroso {
+      background: linear-gradient(135deg, #fce4ec, #fff0f3);
+      border-color: #F48FB1;
+    }
+
+    .terco-card.glorioso {
+      background: linear-gradient(135deg, #e8f5e9, #f1fff2);
+      border-color: #A5D6A7;
+    }
+
+    .terco-card .icone {
+      font-size: 28px;
+      margin-bottom: 8px;
+    }
+
+    .terco-card h3 {
+      font-family: var(--fonte-titulo);
+      font-size: 14px;
+      font-weight: 700;
+      margin-bottom: 3px;
+    }
+
+    .terco-card.gozoso h3 {
+      color: #b8860b;
+    }
+
+    .terco-card.luminoso h3 {
+      color: #1565C0;
+    }
+
+    .terco-card.doloroso h3 {
+      color: #880E4F;
+    }
+
+    .terco-card.glorioso h3 {
+      color: #1B5E20;
+    }
+
+    .terco-card .dias {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+    }
+
+    .terco-card.gozoso .dias {
+      color: #c49a00;
+    }
+
+    .terco-card.luminoso .dias {
+      color: #1976D2;
+    }
+
+    .terco-card.doloroso .dias {
+      color: #AD1457;
+    }
+
+    .terco-card.glorioso .dias {
+      color: #2E7D32;
+    }
+
+    .terco-card .hoje-badge {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      background: var(--rosa-coral);
+      color: #fff;
+      font-size: 9px;
+      font-weight: 700;
+      padding: 2px 7px;
+      border-radius: 10px;
+      letter-spacing: 0.04em;
+    }
+
+    /* ===== ROSÁRIO COMPLETO ===== */
+    .rosario-btn {
+      margin: 14px 16px 0;
+      width: calc(100% - 32px);
+      padding: 16px;
+      background: linear-gradient(135deg, var(--azul-royal-escuro), var(--azul-royal));
+      border: none;
+      border-radius: var(--raio);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      transition: var(--transicao);
+    }
+
+    .rosario-btn:hover {
+      opacity: 0.92;
+    }
+
+    .rosario-btn span {
+      font-family: var(--fonte-titulo);
+      font-size: 15px;
+      font-weight: 600;
+      color: #fff;
+      letter-spacing: 0.05em;
+    }
+
+    /* ===== TELA DE REZAR ===== */
+    .rezar-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: var(--branco-gelo);
+      z-index: 200;
+      flex-direction: column;
+    }
+
+    .rezar-overlay.aberto {
+      display: flex;
+    }
+
+    .rezar-topo {
+      padding: 16px 16px 20px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex-shrink: 0;
+    }
+
+    .rezar-topo.gozoso {
+      background: linear-gradient(135deg, #b8860b, #d4a017);
+    }
+
+    .rezar-topo.luminoso {
+      background: linear-gradient(135deg, #0F3070, #1B4F9B);
+    }
+
+    .rezar-topo.doloroso {
+      background: linear-gradient(135deg, #880E4F, #AD1457);
+    }
+
+    .rezar-topo.glorioso {
+      background: linear-gradient(135deg, #1B5E20, #2E7D32);
+    }
+
+    .rezar-topo.rosario {
+      background: linear-gradient(135deg, var(--azul-royal-escuro), var(--azul-royal));
+    }
+
+    .rezar-topo .fechar {
+      background: rgba(255, 255, 255, 0.18);
+      border: none;
+      border-radius: 10px;
+      width: 36px;
+      height: 36px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      flex-shrink: 0;
+    }
+
+    .rezar-topo h3 {
+      font-family: var(--fonte-titulo);
+      font-size: 17px;
+      font-weight: 600;
+      color: #fff;
+    }
+
+    .rezar-topo p {
+      font-size: 12px;
+      color: rgba(255, 255, 255, 0.75);
+      margin-top: 2px;
+    }
+
+    /* Progresso */
+    .progresso-bar {
+      height: 3px;
+      background: rgba(0, 0, 0, 0.08);
+      flex-shrink: 0;
+    }
+
+    .progresso-fill {
+      height: 100%;
+      background: var(--dourado);
+      transition: width 0.4s ease;
+    }
+
+    /* Conteúdo */
+    .rezar-conteudo {
+      flex: 1;
+      overflow-y: auto;
+      padding: 20px 16px 100px;
+    }
+
+    .misterio-num {
+      text-align: center;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      color: var(--cinza-texto);
+      text-transform: uppercase;
+      margin-bottom: 6px;
+    }
+
+    .misterio-nome {
+      text-align: center;
+      font-family: var(--fonte-titulo);
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--azul-royal);
+      margin-bottom: 4px;
+    }
+
+    .misterio-desc {
+      text-align: center;
+      font-size: 13px;
+      color: var(--cinza-texto);
+      line-height: 1.6;
+      margin-bottom: 20px;
+    }
+
+    .oracao-box {
+      background: var(--branco-puro);
+      border-radius: var(--raio);
+      padding: 20px;
+      box-shadow: var(--sombra);
+      margin-bottom: 12px;
+    }
+
+    .oracao-titulo {
+      font-family: var(--fonte-titulo);
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.10em;
+      color: var(--dourado-escuro);
+      text-transform: uppercase;
+      margin-bottom: 10px;
+    }
+
+    .oracao-texto {
+      font-size: 15px;
+      line-height: 1.85;
+      color: var(--texto-escuro);
+    }
+
+    .oracao-destaque {
+      background: rgba(27, 79, 155, 0.06);
+      border-left: 3px solid var(--azul-royal);
+      border-radius: 0 8px 8px 0;
+      padding: 12px 14px;
+      margin: 10px 0;
+      font-size: 14px;
+      line-height: 1.7;
+      color: var(--texto-escuro);
+      font-style: italic;
+    }
+
+    /* Navegação entre mistérios */
+    .rezar-nav {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: var(--branco-puro);
+      border-top: 1px solid var(--cinza-suave);
+      padding: 12px 16px 20px;
+      display: flex;
+      gap: 10px;
+      align-items: center;
+    }
+
+    .nav-misterio-btn {
+      flex: 1;
+      padding: 12px;
+      border-radius: var(--raio-sm);
+      border: none;
+      font-family: var(--fonte-titulo);
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: var(--transicao);
+      letter-spacing: 0.04em;
+    }
+
+    .nav-anterior {
+      background: var(--cinza-suave);
+      color: var(--cinza-texto);
+    }
+
+    .nav-proximo {
+      background: var(--azul-royal);
+      color: #fff;
+    }
+
+    .nav-proximo:hover {
+      background: var(--azul-royal-escuro);
+    }
+
+    .pontos-misterio {
+      display: flex;
+      gap: 5px;
+      justify-content: center;
+      margin-bottom: 8px;
+    }
+
+    .ponto {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--cinza-suave);
+      transition: var(--transicao);
+    }
+
+    .ponto.ativo {
+      background: var(--azul-royal);
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- CABEÇALHO -->
+  <header class="page-header">
+    <a href="../index.html" class="voltar">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5"
+        stroke-linecap="round" stroke-linejoin="round">
+        <polyline points="15 18 9 12 15 6" />
+      </svg>
+    </a>
+    <h2>Santo Terço</h2>
+  </header>
+
+  <div class="page-content" style="padding-top:16px; padding-bottom:4px;">
+    <p style="font-size:13px; color:var(--cinza-texto); line-height:1.7;">
+      Selecione o terço do dia ou reze o Rosário completo com todos os mistérios.
+    </p>
+  </div>
+
+  <!-- BOTÃO ROSÁRIO COMPLETO -->
+  <button class="rosario-btn" onclick="abrirRosario()">
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#C9A84C" stroke-width="1.8"
+      stroke-linecap="round" stroke-linejoin="round">
+      <circle cx="12" cy="12" r="3" />
+      <circle cx="12" cy="4" r="2" />
+      <circle cx="20" cy="12" r="2" />
+      <circle cx="12" cy="20" r="2" />
+      <circle cx="4" cy="12" r="2" />
+      <line x1="12" y1="6" x2="12" y2="9" />
+      <line x1="15" y1="12" x2="18" y2="12" />
+      <line x1="12" y1="15" x2="12" y2="18" />
+      <line x1="6" y1="12" x2="9" y2="12" />
+    </svg>
+    <span>Rosário Completo</span>
+  </button>
+
+  <!-- GRADE DOS TERÇOS -->
+  <div class="terco-grid">
+
+    <div class="terco-card gozoso" onclick="abrirTerco('gozoso')">
+      <div class="icone">🌟</div>
+      <h3>Gozosos</h3>
+      <div class="dias">Seg · Sáb</div>
+    </div>
+
+    <div class="terco-card luminoso" onclick="abrirTerco('luminoso')">
+      <div class="icone">✨</div>
+      <h3>Luminosos</h3>
+      <div class="dias">Quinta-feira</div>
+    </div>
+
+    <div class="terco-card doloroso" onclick="abrirTerco('doloroso')">
+      <div class="icone">✝️</div>
+      <h3>Dolorosos</h3>
+      <div class="dias">Ter · Sex</div>
+    </div>
+
+    <div class="terco-card glorioso" onclick="abrirTerco('glorioso')">
+      <div class="icone">👑</div>
+      <h3>Gloriosos</h3>
+      <div class="dias">Qua · Dom</div>
+    </div>
+
+  </div>
+
+  <!-- Nota sobre os dias -->
+  <div class="page-content" style="padding-top:14px;">
+    <div
+      style="background:rgba(201,168,76,0.10); border-radius:10px; padding:12px 14px; border:1px solid rgba(201,168,76,0.25);">
+      <p style="font-size:12px; color:var(--dourado-escuro); line-height:1.65;">
+        <strong>✦ Tradição da Igreja:</strong> Os Mistérios Gozosos rezam-se às segundas e sábados; Luminosos às
+        quintas; Dolorosos às terças e sextas; Gloriosos às quartas e domingos. Os Mistérios Luminosos foram
+        acrescentados por São João Paulo II em 2002.
+      </p>
+    </div>
+  </div>
+
+  <!-- ===== TELA DE REZAR ===== -->
+  <div id="rezar-screen" class="rezar-overlay">
+    <div id="rezar-topo-div" class="rezar-topo luminoso">
+      <button class="fechar" onclick="fecharRezar()">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5"
+          stroke-linecap="round">
+          <polyline points="15 18 9 12 15 6" />
+        </svg>
+      </button>
+      <div>
+        <h3 id="rezar-titulo">Mistérios</h3>
+        <p id="rezar-subtitulo">Terço</p>
+      </div>
+    </div>
+    <div class="progresso-bar">
+      <div class="progresso-fill" id="progresso" style="width:0%"></div>
+    </div>
+    <div class="pontos-misterio" id="pontos" style="padding:10px 16px 0;"></div>
+    <div class="rezar-conteudo" id="rezar-corpo"></div>
+    <div class="rezar-nav">
+      <button class="nav-misterio-btn nav-anterior" id="btn-anterior" onclick="irMisterio(-1)">‹ Anterior</button>
+      <button class="nav-misterio-btn nav-proximo" id="btn-proximo" onclick="irMisterio(1)">Próximo ›</button>
+    </div>
+  </div>
+
+  <!-- NAV INFERIOR -->
+  <nav class="nav-bottom">
+    <a href="../index.html" class="nav-item">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round"
+        stroke-linejoin="round">
+        <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
+      </svg>
+      <span>Início</span>
+    </a>
+    <a href="biblia.html" class="nav-item">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round"
+        stroke-linejoin="round">
+        <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" />
+        <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z" />
+      </svg>
+      <span>Bíblia</span>
+    </a>
+    <a href="terco.html" class="nav-item ativo">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round"
+        stroke-linejoin="round">
+        <circle cx="12" cy="12" r="3" />
+        <circle cx="12" cy="4" r="2" />
+        <circle cx="20" cy="12" r="2" />
+        <circle cx="12" cy="20" r="2" />
+        <circle cx="4" cy="12" r="2" />
+        <line x1="12" y1="6" x2="12" y2="9" />
+        <line x1="15" y1="12" x2="18" y2="12" />
+        <line x1="12" y1="15" x2="12" y2="18" />
+        <line x1="6" y1="12" x2="9" y2="12" />
+      </svg>
+      <span>Terço</span>
+    </a>
+    <a href="santos.html" class="nav-item">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round"
+        stroke-linejoin="round">
+        <circle cx="12" cy="8" r="4" />
+        <path d="M6 20v-2a6 6 0 0 1 12 0v2" />
+      </svg>
+      <span>Santos</span>
+    </a>
+    <a href="avisos.html" class="nav-item">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round"
+        stroke-linejoin="round">
+        <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9" />
+        <path d="M13.73 21a2 2 0 0 1-3.46 0" />
+      </svg>
+      <span>Avisos</span>
+    </a>
+  </nav>
+
+  <script>
+    // ===== ORAÇÕES BASE =====
+    const oracoes = {
+      credoApostolico: `Creio em Deus Pai todo-poderoso, criador do céu e da terra; e em Jesus Cristo, seu único Filho, Nosso Senhor; que foi concebido pelo poder do Espírito Santo; nasceu da Virgem Maria; padeceu sob Pôncio Pilatos; foi crucificado, morto e sepultado; desceu à mansão dos mortos; ressuscitou ao terceiro dia; subiu aos céus; está sentado à direita de Deus Pai todo-poderoso, donde há de vir a julgar os vivos e os mortos; creio no Espírito Santo; na Santa Igreja Católica; na comunhão dos santos; na remissão dos pecados; na ressurreição da carne; na vida eterna. Amém.`,
+      paiNosso: `Pai nosso que estais no céu, santificado seja o vosso nome; venha a nós o vosso reino; seja feita a vossa vontade assim na terra como no céu. O pão nosso de cada dia nos dai hoje; perdoai-nos as nossas ofensas, assim como nós perdoamos a quem nos tem ofendido; e não nos deixeis cair em tentação; mas livrai-nos do mal. Amém.`,
+      aveMaria: `Ave Maria, cheia de graça, o Senhor é convosco; bendita sois vós entre as mulheres, e bendito é o fruto do vosso ventre, Jesus. Santa Maria, Mãe de Deus, rogai por nós pecadores, agora e na hora da nossa morte. Amém.`,
+      gloriaAoPai: `Glória ao Pai, ao Filho e ao Espírito Santo. Como era no princípio, agora e sempre, pelos séculos dos séculos. Amém.`,
+      fatima: `Ó meu Jesus, perdoai-nos e livrai-nos do fogo do inferno. Levai as almas todas para o céu, especialmente as que mais precisarem da vossa misericórdia.`,
+      salveRainha: `Salve Rainha, Mãe de misericórdia, vida, doçura e esperança nossa, salve! A vós bradamos, os degredados filhos de Eva; a vós suspiramos, gemendo e chorando neste vale de lágrimas. Eia, pois, advogada nossa, esses vossos olhos misericordiosos a nós volvei; e depois deste desterro, mostrai-nos Jesus, bendito fruto do vosso ventre. Ó clemente, ó piedosa, ó doce sempre Virgem Maria!`,
+      ladainha: `Senhor, tende piedade de nós. Cristo, tende piedade de nós. Senhor, tende piedade de nós. Cristo, ouvi-nos. Cristo, atendei-nos. Pai celestial, que sois Deus, tende piedade de nós. Filho Redentor do mundo, que sois Deus, tende piedade de nós. Espírito Santo, que sois Deus, tende piedade de nós. Santíssima Trindade, que sois um só Deus, tende piedade de nós. Santa Maria, rogai por nós. Santa Mãe de Deus, rogai por nós. Santa Virgem das virgens, rogai por nós. Mãe de Cristo, rogai por nós. Mãe da Igreja, rogai por nós. Mãe da misericórdia, rogai por nós. Mãe da graça divina, rogai por nós. Mãe da esperança, rogai por nós. Mãe puríssima, rogai por nós. Mãe castíssima, rogai por nós. Mãe imaculada, rogai por nós. Mãe amável, rogai por nós. Mãe admirável, rogai por nós. Mãe do Bom Conselho, rogai por nós. Mãe do Criador, rogai por nós. Mãe do Salvador, rogai por nós. Virgem prudentíssima, rogai por nós. Virgem venerável, rogai por nós. Rosa mística, rogai por nós. Torre de David, rogai por nós. Porta do céu, rogai por nós. Estrela da manhã, rogai por nós. Rainha dos Anjos, rogai por nós. Rainha dos Santos, rogai por nós. Rainha concebida sem pecado original, rogai por nós. Rainha do Santíssimo Rosário, rogai por nós. Rainha da paz, rogai por nós. Cordeiro de Deus, que tirais o pecado do mundo, perdoai-nos, Senhor. Cordeiro de Deus, que tirais o pecado do mundo, ouvi-nos, Senhor. Cordeiro de Deus, que tirais o pecado do mundo, tende piedade de nós.`,
+    };
+
+    // ===== MISTÉRIOS =====
+    const misterios = {
+      gozoso: {
+        nome: 'Gozosos', classe: 'gozoso', dias: 'Segunda e Sábado',
+        lista: [
+          { num: 1, nome: 'A Anunciação do Anjo a Maria', desc: 'O Anjo Gabriel anuncia a Maria que ela será a Mãe do Salvador. Maria responde: "Eis aqui a serva do Senhor, faça-se em mim segundo a tua palavra." (Lc 1,38)' },
+          { num: 2, nome: 'A Visitação de Maria a Isabel', desc: 'Maria visita sua prima Isabel, que estava grávida de João Batista. Ao ouvir a saudação de Maria, Isabel exclama: "Bendita és tu entre as mulheres e bendito é o fruto do teu ventre!" (Lc 1,42)' },
+          { num: 3, nome: 'O Nascimento de Jesus em Belém', desc: 'Jesus nasce na manjedoura de Belém. Os anjos anunciam: "Glória a Deus nas alturas e paz na terra aos homens por ele amados." (Lc 2,14)' },
+          { num: 4, nome: 'A Apresentação de Jesus no Templo', desc: 'Maria e José apresentam o menino Jesus no Templo de Jerusalém. O ancião Simeão toma o menino nos braços e proclama: "Agora, Senhor, podes deixar teu servo partir em paz." (Lc 2,29)' },
+          { num: 5, nome: 'A Perda e o Encontro de Jesus no Templo', desc: 'Aos doze anos, Jesus permanece no Templo sem que seus pais o soubessem. Após três dias, Maria e José o encontram entre os doutores, que se admiravam de sua sabedoria. (Lc 2,46)' },
+        ]
+      },
+      luminoso: {
+        nome: 'Luminosos', classe: 'luminoso', dias: 'Quinta-feira',
+        lista: [
+          { num: 1, nome: 'O Batismo de Jesus no Jordão', desc: 'Jesus é batizado por João no Rio Jordão. O céu se abre, o Espírito Santo desce como pomba e uma voz do céu diz: "Este é o meu Filho amado, em quem me comprazo." (Mt 3,17)' },
+          { num: 2, nome: 'As Bodas de Caná', desc: 'A pedido de Maria, Jesus realiza seu primeiro milagre transformando água em vinho nas bodas de Caná. Maria diz aos serventes: "Fazei o que ele vos disser." (Jo 2,5)' },
+          { num: 3, nome: 'O Anúncio do Reino de Deus', desc: 'Jesus percorre a Galileia pregando: "Convertei-vos, porque o Reino dos Céus está próximo." (Mt 4,17) Ele cura os enfermos e convida todos à conversão.' },
+          { num: 4, nome: 'A Transfiguração no Monte Tabor', desc: 'Jesus sobe ao Monte Tabor com Pedro, Tiago e João. Seu rosto resplandece como o sol e seus vestidos ficam brancos como a luz. Uma voz do céu proclama: "Este é o meu Filho amado, ouvi-o." (Mt 17,5)' },
+          { num: 5, nome: 'A Instituição da Eucaristia', desc: 'Na Última Ceia, Jesus institui a Eucaristia: "Isto é o meu corpo entregue por vós. Fazei isto em memória de mim." (Lc 22,19) O maior presente que Jesus nos deixou.' },
+        ]
+      },
+      doloroso: {
+        nome: 'Dolorosos', classe: 'doloroso', dias: 'Terça e Sexta-feira',
+        lista: [
+          { num: 1, nome: 'A Agonia de Jesus no Horto', desc: 'No Jardim do Getsêmani, Jesus reza ao Pai em agonia: "Pai, se queres, afasta de mim este cálice; contudo, não se faça a minha vontade, mas a tua." (Lc 22,42) Seu suor cai como gotas de sangue.' },
+          { num: 2, nome: 'A Flagelação de Jesus', desc: 'Jesus é amarrado a uma coluna e flagelado pelos soldados romanos. Ele aceita os açoites por amor a nós, cumprindo a profecia: "Pelas suas chagas fomos curados." (Is 53,5)' },
+          { num: 3, nome: 'A Coroação de Espinhos', desc: 'Os soldados entrançam uma coroa de espinhos e a colocam na cabeça de Jesus, zombando: "Salve, rei dos judeus!" Ele aceita essa humilhação com silêncio e amor. (Mt 27,29)' },
+          { num: 4, nome: 'Jesus Carrega a Cruz', desc: 'Condenado à morte, Jesus carrega sua pesada cruz pelo caminho da Via Sacra até o Calvário. Ele cai três vezes, mas continua. "Quem quiser vir após mim, carregue sua cruz." (Mc 8,34)' },
+          { num: 5, nome: 'A Crucificação e Morte de Jesus', desc: 'Jesus é pregado na cruz entre dois ladrões. Antes de morrer, perdoa seus algozes: "Pai, perdoai-lhes, pois não sabem o que fazem." (Lc 23,34) Às três horas, entrega o espírito ao Pai.' },
+        ]
+      },
+      glorioso: {
+        nome: 'Gloriosos', classe: 'glorioso', dias: 'Quarta e Domingo',
+        lista: [
+          { num: 1, nome: 'A Ressurreição de Jesus', desc: 'No terceiro dia após a morte, Jesus ressuscita glorioso. O anjo anuncia às mulheres: "Não estais procurando Jesus Nazareno, o Crucificado? Ressuscitou! Não está aqui." (Mc 16,6) A vitória sobre a morte!' },
+          { num: 2, nome: 'A Ascensão de Jesus ao Céu', desc: 'Quarenta dias após a Ressurreição, Jesus sobe ao Céu na presença dos apóstolos no Monte das Oliveiras. Antes de subir, promete: "Estarei convosco todos os dias, até o fim do mundo." (Mt 28,20)' },
+          { num: 3, nome: 'A Vinda do Espírito Santo', desc: 'No dia de Pentecostes, o Espírito Santo desce sobre Maria e os apóstolos em forma de línguas de fogo. Eles ficam cheios do Espírito e começam a falar em outras línguas. Nasce a Igreja! (At 2,4)' },
+          { num: 4, nome: 'A Assunção de Nossa Senhora', desc: 'Maria, ao fim de sua vida terrena, é elevada em corpo e alma ao Céu. Ela foi preservada de todo pecado e por isso Deus a honrou com este privilégio singular, tornando-a Rainha do Céu.' },
+          { num: 5, nome: 'A Coroação de Nossa Senhora', desc: 'No Céu, Maria é coroada Rainha de todo o universo pelo seu Filho Jesus. Ela intercede por nós continuamente. "Uma grande sinal apareceu no céu: uma mulher vestida de sol." (Ap 12,1)' },
+        ]
+      }
+    };
+
+    // =================================================================
+    // ESTADO
+    // passoAtual:
+    //   -2 / -1  = telas de início (Credo / Pai Nosso + Ave Marias + Glória)
+    //    1 .. 5  = mistérios 1 a 5 (terço simples)
+    //   t*10+m   = mistério m do terço t no Rosário (ex: 1=gozoso m1, 21=luminoso m1...)
+    //   10 / 11  = telas de final (Salve Rainha / Ladainha)
+    // =================================================================
+    const INICIO_1 = -2, INICIO_2 = -1;
+    // FINAL usa 100/101 para não conflitar com mistérios do Rosário
+    // (Luminosos misterio 1 = ti*10+m = 1*10+1 = 11, que batia com o antigo FINAL_2=11)
+    const FINAL_1 = 100, FINAL_2 = 101;
+
+    let tercoAtual = null;
+    let passoAtual = INICIO_1;
+    let modoRosario = false;
+    const ordemRosario = ['gozoso', 'luminoso', 'doloroso', 'glorioso'];
+    let tercoRosarioAtual = 0;
+
+    // Passos de início
+    const passosInicio = [
+      {
+        label: 'Início · 1 de 2', titulo: 'Creio em Deus', subtitulo: 'Símbolo dos Apóstolos',
+        conteudo: () => `
+        <div class="oracao-box">
+          <div class="oracao-titulo">✦ Creio (Símbolo dos Apóstolos)</div>
+          <div class="oracao-texto">${oracoes.credoApostolico}</div>
+        </div>`
+      },
+      {
+        label: 'Início · 2 de 2', titulo: 'Pai Nosso e Ave Marias', subtitulo: 'Pelas virtudes fé, esperança e caridade',
+        conteudo: () => `
+        <div class="oracao-box">
+          <div class="oracao-titulo">✦ Pai Nosso</div>
+          <div class="oracao-texto">${oracoes.paiNosso}</div>
+        </div>
+        <div class="oracao-box" style="margin-top:12px;">
+          <div class="oracao-titulo">✦ Ave Maria (3×)</div>
+          <div class="oracao-texto">${oracoes.aveMaria}</div>
+          <div class="oracao-destaque">Reze 3 Ave Marias: a 1ª pela fé, a 2ª pela esperança e a 3ª pela caridade.</div>
+        </div>
+        <div class="oracao-box" style="margin-top:12px;">
+          <div class="oracao-titulo">✦ Glória ao Pai</div>
+          <div class="oracao-texto">${oracoes.gloriaAoPai}</div>
+        </div>`
+      }
+    ];
+
+    // Passos de final
+    const passosFinal = [
+      {
+        label: 'Final · 1 de 2', titulo: 'Salve Rainha',
+        conteudo: () => `
+        <div style="text-align:center;padding:20px 0 16px;">
+          <div style="font-size:40px;margin-bottom:10px;">🌹</div>
+          <div style="font-family:var(--fonte-titulo);font-size:20px;font-weight:700;color:var(--azul-royal);">Parabéns!</div>
+          <div style="font-size:13px;color:var(--cinza-texto);margin-top:6px;line-height:1.65;">Você concluiu o terço.<br>Nossa Senhora intercede por você!</div>
+        </div>
+        <div class="oracao-box">
+          <div class="oracao-titulo">✦ Iniciação à Salve Rainha</div>
+          <div class="oracao-texto" style="font-style:italic;">Infinitas graças vos damos, Soberana Rainha, pelos benefícios que recebemos de vossas mãos liberais. Dignai-vos agora e para sempre tomarmos debaixo de vosso poderoso amparo; e para mais vos agradecer, vos saudamos com uma Salve Rainha:</div>
+        </div>
+        <div class="oracao-box" style="margin-top:12px;">
+          <div class="oracao-titulo">✦ Salve Rainha</div>
+          <div class="oracao-texto">${oracoes.salveRainha}</div>
+        </div>`
+      },
+      {
+        label: 'Final · 2 de 2', titulo: 'Ladainha de Nossa Senhora',
+        conteudo: () => `
+        <div class="oracao-box">
+          <div class="oracao-titulo">✦ Ladainha de Nossa Senhora</div>
+          <div class="oracao-texto" style="font-size:13px;line-height:2.1;">${oracoes.ladainha}</div>
+        </div>
+        <div style="text-align:center;margin-top:20px;padding-bottom:10px;">
+          <button onclick="fecharRezar()" style="background:var(--azul-royal);color:#fff;border:none;border-radius:var(--raio-sm);padding:14px 32px;font-family:var(--fonte-titulo);font-size:14px;font-weight:600;cursor:pointer;letter-spacing:0.05em;">Concluir ✓</button>
+        </div>`
+      }
+    ];
+
+    // Gera a sequência completa de passos
+    function obterSequencia() {
+      if (!modoRosario) {
+        return [INICIO_1, INICIO_2, 1, 2, 3, 4, 5, FINAL_1, FINAL_2];
+      }
+      // Rosário: início + (ti*10+m) para cada terço/mistério + final
+      // ti=0 gozoso, ti=1 luminoso, ti=2 doloroso, ti=3 glorioso
+      // Valores: 1-5, 11-15, 21-25, 31-35 — sem conflito com FINAL_1=100/FINAL_2=101
+      const seq = [INICIO_1, INICIO_2];
+      ordemRosario.forEach((_, ti) => {
+        for (let m = 1; m <= 5; m++) seq.push(ti * 10 + m);
+      });
+      seq.push(FINAL_1, FINAL_2);
+      return seq;
+    }
+
+    // ===== BADGE DE HOJE =====
+    function marcarHoje() {
+      const dia = new Date().getDay();
+      const mapa = { 1: 'gozoso', 2: 'doloroso', 3: 'glorioso', 4: 'luminoso', 5: 'doloroso', 6: 'gozoso', 0: 'glorioso' };
+      const hojeId = mapa[dia];
+      document.querySelectorAll('.terco-card').forEach(c => {
+        if (c.getAttribute('onclick').includes(hojeId)) {
+          const badge = document.createElement('div');
+          badge.className = 'hoje-badge';
+          badge.textContent = 'HOJE';
+          c.appendChild(badge);
+        }
+      });
+    }
+    marcarHoje();
+
+    // ===== ABRIR TERÇO =====
+    function abrirTerco(tipo) {
+      modoRosario = false;
+      tercoAtual = tipo;
+      passoAtual = INICIO_1;
+      const info = misterios[tipo];
+      document.getElementById('rezar-titulo').textContent = `Mistérios ${info.nome}`;
+      document.getElementById('rezar-subtitulo').textContent = info.dias;
+      document.getElementById('rezar-topo-div').className = `rezar-topo ${info.classe}`;
+      document.getElementById('btn-anterior').style.display = '';
+      document.getElementById('btn-proximo').style.display = '';
+      document.getElementById('rezar-screen').classList.add('aberto');
+      renderPasso();
+    }
+
+    // ===== ROSÁRIO COMPLETO =====
+    function abrirRosario() {
+      modoRosario = true;
+      tercoRosarioAtual = 0;
+      tercoAtual = ordemRosario[0];
+      passoAtual = INICIO_1;
+      document.getElementById('rezar-titulo').textContent = 'Santo Rosário';
+      document.getElementById('rezar-subtitulo').textContent = 'Todos os mistérios';
+      document.getElementById('rezar-topo-div').className = 'rezar-topo rosario';
+      document.getElementById('btn-anterior').style.display = '';
+      document.getElementById('btn-proximo').style.display = '';
+      document.getElementById('rezar-screen').classList.add('aberto');
+      renderPasso();
+    }
+
+    // ===== FECHAR =====
+    function fecharRezar() {
+      document.getElementById('rezar-screen').classList.remove('aberto');
+    }
+
+    // ===== NAVEGAÇÃO =====
+    function irMisterio(delta) {
+      const seq = obterSequencia();
+      const idx = seq.indexOf(passoAtual);
+      const novoIdx = idx + delta;
+      if (novoIdx < 0 || novoIdx >= seq.length) return;
+      passoAtual = seq[novoIdx];
+      renderPasso();
+    }
+
+    // ===== RENDER =====
+    function renderPasso() {
+      const seq = obterSequencia();
+      const idx = seq.indexOf(passoAtual);
+      const perc = ((idx + 1) / seq.length) * 100;
+      document.getElementById('progresso').style.width = perc + '%';
+
+      const corpo = document.getElementById('rezar-corpo');
+      const pontosEl = document.getElementById('pontos');
+      pontosEl.innerHTML = '';
+
+      // ---- INÍCIO ----
+      if (passoAtual === INICIO_1 || passoAtual === INICIO_2) {
+        const p = passoAtual === INICIO_1 ? passosInicio[0] : passosInicio[1];
+        [INICIO_1, INICIO_2].forEach(v => {
+          const d = document.createElement('div');
+          d.className = 'ponto' + (v === passoAtual ? ' ativo' : '');
+          pontosEl.appendChild(d);
+        });
+        corpo.innerHTML = `
+        <div class="misterio-num">${p.label}</div>
+        <div class="misterio-nome">${p.titulo}</div>
+        <div class="misterio-desc">${p.subtitulo}</div>
+        ${p.conteudo()}`;
+
+        // ---- FINAL ----
+      } else if (passoAtual === FINAL_1 || passoAtual === FINAL_2) {
+        const p = passoAtual === FINAL_1 ? passosFinal[0] : passosFinal[1];
+        [FINAL_1, FINAL_2].forEach(v => {
+          const d = document.createElement('div');
+          d.className = 'ponto' + (v === passoAtual ? ' ativo' : '');
+          pontosEl.appendChild(d);
+        });
+        corpo.innerHTML = `
+        <div class="misterio-num">${p.label}</div>
+        <div class="misterio-nome">${p.titulo}</div>
+        ${p.conteudo()}`;
+
+        // ---- MISTÉRIO ----
+      } else {
+        let tiIdx, mNum;
+        if (modoRosario) {
+          tiIdx = Math.floor(passoAtual / 10);
+          mNum = passoAtual % 10;
+          tercoAtual = ordemRosario[tiIdx];
+          tercoRosarioAtual = tiIdx;
+        } else {
+          tiIdx = 0;
+          mNum = passoAtual;
+        }
+        const info = misterios[tercoAtual];
+        const m = info.lista[mNum - 1];
+
+        // pontos: só os 5 mistérios do terço atual
+        for (let i = 1; i <= 5; i++) {
+          const val = modoRosario ? tiIdx * 10 + i : i;
+          const d = document.createElement('div');
+          d.className = 'ponto' + (i === mNum ? ' ativo' : '');
+          pontosEl.appendChild(d);
+        }
+
+        corpo.innerHTML = `
+        ${modoRosario ? `<div style="text-align:center;font-size:11px;font-weight:700;letter-spacing:0.10em;color:var(--cinza-texto);text-transform:uppercase;margin-bottom:6px;">Mistérios ${info.nome}</div>` : ''}
+        <div class="misterio-num">${m.num}º Mistério</div>
+        <div class="misterio-nome">${m.nome}</div>
+        <div class="misterio-desc">${m.desc}</div>
+        <div class="oracao-box">
+          <div class="oracao-titulo">✦ Pai Nosso</div>
+          <div class="oracao-texto">${oracoes.paiNosso}</div>
+        </div>
+        <div class="oracao-box" style="margin-top:12px;">
+          <div class="oracao-titulo">✦ Ave Maria (10×)</div>
+          <div class="oracao-texto">${oracoes.aveMaria}</div>
+          <div class="oracao-destaque">Repita a Ave Maria 10 vezes, meditando no mistério acima.</div>
+        </div>
+        <div class="oracao-box" style="margin-top:12px;">
+          <div class="oracao-titulo">✦ Glória ao Pai</div>
+          <div class="oracao-texto">${oracoes.gloriaAoPai}</div>
+        </div>
+        <div class="oracao-box" style="margin-top:12px;">
+          <div class="oracao-titulo">✦ Oração de Fátima</div>
+          <div class="oracao-texto">${oracoes.fatima}</div>
+        </div>`;
+      }
+
+      corpo.scrollTop = 0;
+
+      // Botões
+      const btnAnt = document.getElementById('btn-anterior');
+      const btnPro = document.getElementById('btn-proximo');
+      const primeiro = idx === 0;
+      const ultimo = idx === seq.length - 1;
+      btnAnt.style.opacity = primeiro ? '0.35' : '1';
+      btnAnt.disabled = primeiro;
+      btnPro.textContent = ultimo ? 'Concluir ✓' : 'Próximo ›';
+      btnPro.onclick = ultimo ? fecharRezar : () => irMisterio(1);
+    }
+  </script>
+</body>
+
+</html>

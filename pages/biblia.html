@@ -1,0 +1,871 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Bíblia — Jovens Luz do Mundo</title>
+    <link rel="stylesheet" href="../css/style.css" />
+        <link rel="icon" type="image/svg+xml" href="../img/gemini-svg.svg" />
+
+    <style>
+        .tabs {
+            display: flex;
+            gap: 8px;
+            margin: 16px 16px 0;
+            overflow-x: auto;
+            padding-bottom: 4px;
+            scrollbar-width: none;
+        }
+
+        .tabs::-webkit-scrollbar {
+            display: none;
+        }
+
+        .tab-btn {
+            flex-shrink: 0;
+            padding: 8px 18px;
+            border-radius: 20px;
+            border: 1.5px solid var(--azul-royal);
+            background: transparent;
+            color: var(--azul-royal);
+            font-family: var(--fonte-titulo);
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transicao);
+            letter-spacing: 0.05em;
+        }
+
+        .tab-btn.ativo {
+            background: var(--azul-royal);
+            color: #fff;
+        }
+
+        .tab-conteudo {
+            display: none;
+        }
+
+        .tab-conteudo.ativo {
+            display: block;
+        }
+
+        .versiculo-grande {
+            background: linear-gradient(135deg, var(--azul-royal-escuro), var(--azul-royal));
+            border-radius: var(--raio);
+            padding: 24px 20px;
+            margin: 16px 16px 0;
+            position: relative;
+            overflow: hidden;
+            min-height: 120px;
+        }
+
+        .versiculo-grande::before {
+            content: '\201C';
+            position: absolute;
+            top: -20px;
+            right: 16px;
+            font-size: 100px;
+            font-family: Georgia, serif;
+            color: rgba(201, 168, 76, 0.18);
+            line-height: 1;
+        }
+
+        .versiculo-grande .label {
+            font-size: 10px;
+            font-weight: 700;
+            letter-spacing: 0.14em;
+            color: var(--dourado-claro);
+            text-transform: uppercase;
+            margin-bottom: 12px;
+        }
+
+        .versiculo-grande p {
+            font-size: 16px;
+            line-height: 1.7;
+            color: #fff;
+            font-style: italic;
+            position: relative;
+            z-index: 1;
+        }
+
+        .versiculo-grande .ref {
+            margin-top: 14px;
+            font-family: var(--fonte-titulo);
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--dourado-claro);
+        }
+
+        @keyframes pulse {
+
+            0%,
+            100% {
+                opacity: .35
+            }
+
+            50% {
+                opacity: .8
+            }
+        }
+
+        .loading-pulse {
+            border-radius: 6px;
+            height: 14px;
+            margin: 8px 0;
+            animation: pulse 1.4s ease-in-out infinite;
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .lectio-card {
+            background: var(--branco-puro);
+            border-radius: var(--raio);
+            padding: 20px;
+            margin: 12px 16px 0;
+            box-shadow: var(--sombra);
+            border-top: 3px solid var(--dourado);
+        }
+
+        .lectio-etapa {
+            display: flex;
+            gap: 14px;
+            align-items: flex-start;
+            margin-bottom: 18px;
+        }
+
+        .lectio-etapa:last-child {
+            margin-bottom: 0;
+        }
+
+        .lectio-num {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--dourado-escuro), var(--dourado));
+            color: #fff;
+            font-family: var(--fonte-titulo);
+            font-size: 13px;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .lectio-etapa h4 {
+            font-family: var(--fonte-titulo);
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--azul-royal);
+            margin-bottom: 4px;
+        }
+
+        .lectio-etapa p {
+            font-size: 13px;
+            color: var(--cinza-texto);
+            line-height: 1.6;
+        }
+
+        .lectio-sep {
+            height: 1px;
+            background: var(--cinza-suave);
+            margin: 12px 0;
+        }
+
+        .evangelho-card {
+            background: var(--branco-puro);
+            border-radius: var(--raio);
+            padding: 20px;
+            margin: 16px 16px 0;
+            box-shadow: var(--sombra);
+            border-left: 4px solid var(--rosa-coral);
+            min-height: 80px;
+        }
+
+        .evangelho-titulo {
+            font-family: var(--fonte-titulo);
+            font-size: 12px;
+            font-weight: 700;
+            color: var(--rosa-coral-escuro);
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            margin-bottom: 10px;
+        }
+
+        .evangelho-texto {
+            font-size: 14px;
+            line-height: 1.85;
+            color: var(--texto-escuro);
+        }
+
+        .evangelho-ref {
+            margin-top: 10px;
+            font-size: 12px;
+            font-weight: 700;
+            color: var(--azul-royal);
+            font-family: var(--fonte-titulo);
+        }
+
+        .loading-pulse-blue {
+            border-radius: 6px;
+            height: 13px;
+            margin: 6px 0;
+            animation: pulse 1.4s ease-in-out infinite;
+            background: rgba(27, 79, 155, 0.12);
+        }
+
+        .busca-container {
+            margin: 16px 16px 0;
+        }
+
+        .busca-input {
+            width: 100%;
+            padding: 12px 16px;
+            border: 1.5px solid var(--cinza-suave);
+            border-radius: var(--raio-sm);
+            font-family: var(--fonte-corpo);
+            font-size: 14px;
+            color: var(--texto-escuro);
+            background: var(--branco-puro);
+            outline: none;
+            transition: var(--transicao);
+        }
+
+        .busca-input:focus {
+            border-color: var(--azul-royal);
+        }
+
+        .testamento-titulo {
+            font-family: var(--fonte-titulo);
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 0.12em;
+            color: var(--dourado-escuro);
+            text-transform: uppercase;
+            padding: 14px 16px 8px;
+        }
+
+        .livro-lista {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 8px;
+            padding: 0 16px;
+        }
+
+        .livro-btn {
+            background: var(--branco-puro);
+            border: 1px solid var(--cinza-suave);
+            border-radius: var(--raio-sm);
+            padding: 10px 12px;
+            text-align: left;
+            cursor: pointer;
+            transition: var(--transicao);
+            font-family: var(--fonte-corpo);
+        }
+
+        .livro-btn:hover {
+            border-color: var(--azul-royal);
+            background: rgba(27, 79, 155, 0.04);
+        }
+
+        .livro-btn .nome {
+            font-size: 13px;
+            font-weight: 700;
+            color: var(--texto-escuro);
+            display: block;
+        }
+
+        .livro-btn .abrev {
+            font-size: 11px;
+            color: var(--cinza-texto);
+        }
+
+        .leitor-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: var(--branco-gelo);
+            z-index: 200;
+            flex-direction: column;
+        }
+
+        .leitor-overlay.aberto {
+            display: flex;
+        }
+
+        .leitor-topo {
+            background: linear-gradient(135deg, var(--azul-royal-escuro), var(--azul-royal));
+            padding: 16px 16px 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            flex-shrink: 0;
+        }
+
+        .leitor-topo h3 {
+            font-family: var(--fonte-titulo);
+            font-size: 17px;
+            color: #fff;
+            font-weight: 600;
+        }
+
+        .leitor-topo .fechar {
+            background: rgba(255, 255, 255, 0.15);
+            border: none;
+            border-radius: 10px;
+            width: 36px;
+            height: 36px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+        }
+
+        .leitor-nav {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 12px 16px;
+            background: var(--branco-puro);
+            border-bottom: 1px solid var(--cinza-suave);
+            flex-shrink: 0;
+        }
+
+        .cap-btn {
+            width: 36px;
+            height: 36px;
+            border-radius: 8px;
+            border: 1px solid var(--cinza-suave);
+            background: var(--branco-puro);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            transition: var(--transicao);
+        }
+
+        .cap-btn:hover:not(:disabled) {
+            background: var(--azul-royal);
+            color: #fff;
+            border-color: var(--azul-royal);
+        }
+
+        .cap-btn:disabled {
+            opacity: .35;
+            cursor: default;
+        }
+
+        .cap-info {
+            flex: 1;
+            text-align: center;
+            font-family: var(--fonte-titulo);
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--azul-royal);
+        }
+
+        .leitor-texto {
+            flex: 1;
+            overflow-y: auto;
+            padding: 20px 16px 40px;
+        }
+
+        .v-linha {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 10px;
+            line-height: 1.75;
+        }
+
+        .v-num {
+            font-size: 11px;
+            font-weight: 700;
+            color: var(--dourado-escuro);
+            min-width: 20px;
+            padding-top: 3px;
+            font-family: var(--fonte-titulo);
+        }
+
+        .v-txt {
+            font-size: 15px;
+            color: var(--texto-escuro);
+        }
+    </style>
+</head>
+
+<body>
+
+    <header class="page-header">
+        <a href="../index.html" class="voltar">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5"
+                stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="15 18 9 12 15 6" />
+            </svg>
+        </a>
+        <h2>Bíblia Sagrada</h2>
+    </header>
+
+    <div class="tabs">
+        <button class="tab-btn ativo" onclick="trocarAba('versiculo')">Versículo do Dia</button>
+        <button class="tab-btn" onclick="trocarAba('lectio')">Lectio Divina</button>
+        <button class="tab-btn" onclick="trocarAba('busca')">Buscar</button>
+    </div>
+
+    <!-- ABA VERSÍCULO -->
+    <div id="aba-versiculo" class="tab-conteudo ativo">
+        <div class="versiculo-grande" id="card-versiculo">
+            <div class="label">✦ Versículo de Hoje</div>
+            <div class="loading-pulse" style="width:90%"></div>
+            <div class="loading-pulse" style="width:75%"></div>
+            <div class="loading-pulse" style="width:40%;height:12px;margin-top:14px;"></div>
+        </div>
+        <div class="page-content" style="padding-top:20px;">
+            <p style="font-size:13px;color:var(--cinza-texto);text-align:center;margin-bottom:16px;">Bíblia de Jerusalém
+                · Edição Ave Maria</p>
+            <div class="secao-titulo" style="margin:0 0 12px;">Versículos desta semana</div>
+            <div id="lista-versiculos"></div>
+        </div>
+    </div>
+
+    <!-- ABA LECTIO -->
+    <div id="aba-lectio" class="tab-conteudo">
+        <div class="page-content" style="padding-top:16px;padding-bottom:4px;">
+            <p style="font-size:13px;color:var(--cinza-texto);line-height:1.7;">
+                A <strong>Lectio Divina</strong> é uma forma de oração com a Palavra de Deus praticada desde os
+                primeiros séculos. Siga os quatro passos com o <strong>Evangelho de hoje</strong>:
+            </p>
+        </div>
+
+        <div id="evangelho-container">
+            <div class="evangelho-card">
+                <div class="evangelho-titulo">✦ Evangelho de Hoje</div>
+                <div class="loading-pulse-blue" style="width:95%"></div>
+                <div class="loading-pulse-blue" style="width:85%"></div>
+                <div class="loading-pulse-blue" style="width:90%"></div>
+                <div class="loading-pulse-blue" style="width:55%"></div>
+            </div>
+        </div>
+
+        <div class="page-content" style="padding-top:16px;">
+            <div class="secao-titulo" style="margin:0 0 12px;">Os 4 passos</div>
+        </div>
+        <div class="lectio-card">
+            <div class="lectio-etapa">
+                <div class="lectio-num">1</div>
+                <div>
+                    <h4>Lectio — Leitura</h4>
+                    <p>Leia o Evangelho acima com atenção e calma, como quem lê uma carta de um amigo. Releia até sentir
+                        cada palavra entrar no coração.</p>
+                </div>
+            </div>
+            <div class="lectio-sep"></div>
+            <div class="lectio-etapa">
+                <div class="lectio-num">2</div>
+                <div>
+                    <h4>Meditatio — Meditação</h4>
+                    <p>Escolha uma palavra ou frase que tocou seu coração. Repita-a suavemente, deixando-a ressoar
+                        dentro de você.</p>
+                </div>
+            </div>
+            <div class="lectio-sep"></div>
+            <div class="lectio-etapa">
+                <div class="lectio-num">3</div>
+                <div>
+                    <h4>Oratio — Oração</h4>
+                    <p>Responda a Deus com o coração. Diga o que sentiu, o que precisa, o que quer agradecer. Deixe
+                        fluir de forma espontânea.</p>
+                </div>
+            </div>
+            <div class="lectio-sep"></div>
+            <div class="lectio-etapa">
+                <div class="lectio-num">4</div>
+                <div>
+                    <h4>Contemplatio — Contemplação</h4>
+                    <p>Fique em silêncio diante de Deus. Descanse nele. Deixe-o agir no seu interior sem palavras.</p>
+                </div>
+            </div>
+        </div>
+        <div style="height:20px;"></div>
+    </div>
+
+    <!-- ABA BUSCAR -->
+    <div id="aba-busca" class="tab-conteudo">
+        <div class="busca-container">
+            <input type="text" class="busca-input" placeholder="Buscar livro... (ex: Salmos, João, Gênesis)"
+                oninput="filtrarLivros(this.value)" />
+        </div>
+        <div class="testamento-titulo">✦ Antigo Testamento</div>
+        <div class="livro-lista" id="lista-at"></div>
+        <div class="testamento-titulo" style="margin-top:8px;">✦ Novo Testamento</div>
+        <div class="livro-lista" id="lista-nt"></div>
+        <div style="height:30px;"></div>
+    </div>
+
+    <!-- LEITOR -->
+    <div id="leitor" class="leitor-overlay">
+        <div class="leitor-topo">
+            <button class="fechar" onclick="fecharLeitor()">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5"
+                    stroke-linecap="round">
+                    <polyline points="15 18 9 12 15 6" />
+                </svg>
+            </button>
+            <h3 id="leitor-titulo">Livro</h3>
+        </div>
+        <div class="leitor-nav">
+            <button class="cap-btn" id="btn-ant" onclick="mudarCap(-1)">‹</button>
+            <div class="cap-info" id="leitor-cap">Capítulo 1</div>
+            <button class="cap-btn" id="btn-pro" onclick="mudarCap(1)">›</button>
+        </div>
+        <div class="leitor-texto" id="leitor-corpo"></div>
+    </div>
+
+    <!-- NAV -->
+    <nav class="nav-bottom">
+        <a href="../index.html" class="nav-item"><svg width="22" height="22" viewBox="0 0 24 24" fill="none"
+                stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
+            </svg><span>Início</span></a>
+        <a href="biblia.html" class="nav-item ativo"><svg width="22" height="22" viewBox="0 0 24 24" fill="none"
+                stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" />
+                <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z" />
+            </svg><span>Bíblia</span></a>
+        <a href="terco.html" class="nav-item"><svg width="22" height="22" viewBox="0 0 24 24" fill="none"
+                stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="3" />
+                <circle cx="12" cy="4" r="2" />
+                <circle cx="20" cy="12" r="2" />
+                <circle cx="12" cy="20" r="2" />
+                <circle cx="4" cy="12" r="2" />
+                <line x1="12" y1="6" x2="12" y2="9" />
+                <line x1="15" y1="12" x2="18" y2="12" />
+                <line x1="12" y1="15" x2="12" y2="18" />
+                <line x1="6" y1="12" x2="9" y2="12" />
+            </svg><span>Terço</span></a>
+        <a href="santos.html" class="nav-item"><svg width="22" height="22" viewBox="0 0 24 24" fill="none"
+                stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="8" r="4" />
+                <path d="M6 20v-2a6 6 0 0 1 12 0v2" />
+            </svg><span>Santos</span></a>
+        <a href="avisos.html" class="nav-item"><svg width="22" height="22" viewBox="0 0 24 24" fill="none"
+                stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9" />
+                <path d="M13.73 21a2 2 0 0 1-3.46 0" />
+            </svg><span>Avisos</span></a>
+    </nav>
+
+    <script>
+        // ===== ABAS =====
+        function trocarAba(id) {
+            document.querySelectorAll('.tab-btn').forEach((b, i) => b.classList.toggle('ativo', ['versiculo', 'lectio', 'busca'][i] === id));
+            document.querySelectorAll('.tab-conteudo').forEach(c => c.classList.remove('ativo'));
+            document.getElementById('aba-' + id).classList.add('ativo');
+        }
+
+        // ===== VERSÍCULOS FIXOS (fallback para quando não há internet) =====
+        const vFallback = [
+            { t: 'Porque Deus amou o mundo de tal maneira que deu o seu Filho unigênito, para que todo aquele que nele crê não pereça, mas tenha a vida eterna.', r: 'João 3,16' },
+            { t: 'O Senhor é meu pastor e nada me faltará.', r: 'Salmo 23,1' },
+            { t: 'Tudo posso naquele que me fortalece.', r: 'Filipenses 4,13' },
+            { t: 'Sede fortes e corajosos. Não temais, pois o Senhor vosso Deus marcha convosco.', r: 'Deuteronômio 31,6' },
+            { t: 'Confiai no Senhor de todo o coração e não vos apoieis em vosso próprio entendimento.', r: 'Provérbios 3,5' },
+            { t: 'Eu sou a ressurreição e a vida. Quem crê em mim, ainda que morra, viverá.', r: 'João 11,25' },
+            { t: 'A paz vos deixo, a minha paz vos dou. Não a dou como o mundo a dá. Não se turbe o vosso coração.', r: 'João 14,27' },
+            { t: 'Buscai primeiro o Reino de Deus e a sua justiça, e todas essas coisas vos serão acrescentadas.', r: 'Mateus 6,33' },
+            { t: 'O amor é paciente, o amor é bondoso. O amor não é invejoso, não se ostenta, não se ensoberbece.', r: '1 Coríntios 13,4' },
+            { t: 'Nada façais por partidarismo ou vaidade, mas em humildade considerai os outros superiores a vós mesmos.', r: 'Filipenses 2,3' },
+            { t: 'Que o Deus da esperança vos encha de toda alegria e paz na vossa fé.', r: 'Romanos 15,13' },
+            { t: 'Sede misericordiosos como vosso Pai é misericordioso.', r: 'Lucas 6,36' },
+            { t: 'Eu sou a luz do mundo. Quem me segue não andará nas trevas, mas terá a luz da vida.', r: 'João 8,12' },
+            { t: 'Pedi e dar-se-vos-á; buscai e achareis; batei e abrir-se-vos-á.', r: 'Mateus 7,7' },
+            { t: 'Amarás o Senhor teu Deus com todo o teu coração, toda a tua alma e todo o teu entendimento.', r: 'Mateus 22,37' },
+        ];
+
+        function versiculoPorDia() {
+            const d = new Date();
+            const dia = Math.floor((d - new Date(d.getFullYear(), 0, 0)) / 86400000);
+            return vFallback[dia % vFallback.length];
+        }
+
+        // ===== API 1: VERSÍCULO DO DIA — ABíbliaDigital =====
+        // Documentação: https://www.abibliadigital.com.br
+        // Endpoint: GET /api/verses/nvi/random  → versículo aleatório (sem autenticação: 20 req/h)
+        async function carregarVersiculo() {
+            const card = document.getElementById('card-versiculo');
+            try {
+                const r = await fetch('https://www.abibliadigital.com.br/api/verses/nvi/random');
+                if (!r.ok) throw new Error();
+                const d = await r.json();
+                const texto = d.text;
+                const ref = `${d.book?.name || ''} ${d.chapter},${d.number}`.trim();
+                card.innerHTML = `<div class="label">✦ Versículo de Hoje</div><p>"${texto}"</p><div class="ref">${ref}</div>`;
+            } catch {
+                const v = versiculoPorDia();
+                card.innerHTML = `<div class="label">✦ Versículo de Hoje</div><p>"${v.t}"</p><div class="ref">${v.r}</div>`;
+            }
+        }
+        carregarVersiculo();
+
+        // Versículos da semana (fixos)
+        const listaEl = document.getElementById('lista-versiculos');
+        vFallback.slice(0, 7).forEach(v => {
+            const d = document.createElement('div');
+            d.style.cssText = 'background:var(--branco-puro);border-radius:10px;padding:14px 16px;margin-bottom:10px;border-left:3px solid var(--rosa-coral);box-shadow:var(--sombra)';
+            d.innerHTML = `<p style="font-size:14px;line-height:1.65;color:var(--texto-escuro);font-style:italic">"${v.t}"</p><p style="font-size:12px;font-weight:700;color:var(--azul-royal);font-family:var(--fonte-titulo);margin-top:8px">${v.r}</p>`;
+            listaEl.appendChild(d);
+        });
+
+        // ===== API 2: EVANGELHO DO DIA =====
+        async function carregarEvangelho() {
+            const cont = document.getElementById('evangelho-container');
+            try {
+                const controller = new AbortController();
+                // Cancela a busca se o servidor demorar mais de 4 segundos
+                const timeoutId = setTimeout(() => controller.abort(), 4000);
+
+                const r = await fetch('https://liturgia.up.railway.app/', { signal: controller.signal });
+                clearTimeout(timeoutId);
+
+                if (!r.ok) throw new Error(`Erro na API (${r.status})`);
+
+                const d = await r.json();
+                const ev = d.evangelho;
+                if (!ev) throw new Error('Evangelho não encontrado na resposta');
+
+                const titulo = ev.referencia || 'Evangelho do Dia';
+                const texto = (ev.texto || '').replace(/\n\n/g, '</p><p>').replace(/\n/g, '<br>');
+
+                cont.innerHTML = `
+        <div class="evangelho-card">
+          <div class="evangelho-titulo">✦ Evangelho de Hoje</div>
+          <p class="evangelho-texto">${texto}</p>
+          <div class="evangelho-ref">${titulo}</div>
+        </div>`;
+            } catch (erro) {
+                console.warn("Falha ao carregar evangelho:", erro);
+                cont.innerHTML = `
+        <div class="evangelho-card">
+          <div class="evangelho-titulo">✦ Evangelho de Hoje</div>
+          <p class="evangelho-texto" style="color:var(--cinza-texto);font-style:italic">Servidor de liturgia indisponível no momento.</p>
+          <a href="https://liturgia.cancaonova.com/pb/" target="_blank"
+             style="display:inline-block;margin-top:12px;font-size:13px;font-weight:700;color:var(--azul-royal);font-family:var(--fonte-titulo);text-decoration:none;">
+            Acessar Liturgia Diária →
+          </a>
+        </div>`;
+            }
+        }
+        carregarEvangelho();
+
+        // ===== LIVROS =====
+        const at = [
+            { n: 'Gênesis', a: 'Gn', id: 'gn', c: 50 }, { n: 'Êxodo', a: 'Ex', id: 'ex', c: 40 }, { n: 'Levítico', a: 'Lv', id: 'lv', c: 27 },
+            { n: 'Números', a: 'Nm', id: 'nm', c: 36 }, { n: 'Deuteronômio', a: 'Dt', id: 'dt', c: 34 }, { n: 'Josué', a: 'Js', id: 'js', c: 24 },
+            { n: 'Juízes', a: 'Jz', id: 'jz', c: 21 }, { n: 'Rute', a: 'Rt', id: 'rt', c: 4 }, { n: '1 Samuel', a: '1Sm', id: '1sm', c: 31 },
+            { n: '2 Samuel', a: '2Sm', id: '2sm', c: 24 }, { n: '1 Reis', a: '1Rs', id: '1rs', c: 22 }, { n: '2 Reis', a: '2Rs', id: '2rs', c: 25 },
+            { n: '1 Crônicas', a: '1Cr', id: '1cr', c: 29 }, { n: '2 Crônicas', a: '2Cr', id: '2cr', c: 36 }, { n: 'Esdras', a: 'Ed', id: 'ed', c: 10 },
+            { n: 'Neemias', a: 'Ne', id: 'ne', c: 13 }, { n: 'Tobias', a: 'Tb', id: 'tb', c: 14 }, { n: 'Judite', a: 'Jt', id: 'jt', c: 16 },
+            { n: 'Ester', a: 'Est', id: 'est', c: 10 }, { n: '1 Macabeus', a: '1Mc', id: '1mc', c: 16 }, { n: '2 Macabeus', a: '2Mc', id: '2mc', c: 15 },
+            { n: 'Jó', a: 'Jó', id: 'jo', c: 42 }, { n: 'Salmos', a: 'Sl', id: 'sl', c: 150 }, { n: 'Provérbios', a: 'Pr', id: 'pr', c: 31 },
+            { n: 'Eclesiastes', a: 'Ecl', id: 'ecl', c: 12 }, { n: 'Cântico', a: 'Ct', id: 'ct', c: 8 }, { n: 'Sabedoria', a: 'Sb', id: 'sb', c: 19 },
+            { n: 'Eclesiástico', a: 'Sir', id: 'sir', c: 51 }, { n: 'Isaías', a: 'Is', id: 'is', c: 66 }, { n: 'Jeremias', a: 'Jr', id: 'jr', c: 52 },
+            { n: 'Lamentações', a: 'Lm', id: 'lm', c: 5 }, { n: 'Baruc', a: 'Br', id: 'br', c: 6 }, { n: 'Ezequiel', a: 'Ez', id: 'ez', c: 48 },
+            { n: 'Daniel', a: 'Dn', id: 'dn', c: 14 }, { n: 'Oseias', a: 'Os', id: 'os', c: 14 }, { n: 'Joel', a: 'Jl', id: 'jl', c: 3 },
+            { n: 'Amós', a: 'Am', id: 'am', c: 9 }, { n: 'Abdias', a: 'Ab', id: 'ab', c: 1 }, { n: 'Jonas', a: 'Jn', id: 'jn', c: 4 },
+            { n: 'Miquéias', a: 'Mq', id: 'mq', c: 7 }, { n: 'Naum', a: 'Na', id: 'na', c: 3 }, { n: 'Habacuc', a: 'Hc', id: 'hc', c: 3 },
+            { n: 'Sofonias', a: 'Sf', id: 'sf', c: 3 }, { n: 'Ageu', a: 'Ag', id: 'ag', c: 2 }, { n: 'Zacarias', a: 'Zc', id: 'zc', c: 14 },
+            { n: 'Malaquias', a: 'Ml', id: 'ml', c: 4 }
+        ];
+        const nt = [
+            { n: 'Mateus', a: 'Mt', id: 'mt', c: 28 }, { n: 'Marcos', a: 'Mc', id: 'mc', c: 16 }, { n: 'Lucas', a: 'Lc', id: 'lc', c: 24 },
+            { n: 'João', a: 'Jo', id: 'jo', c: 21 }, { n: 'Atos', a: 'At', id: 'at', c: 28 }, { n: 'Romanos', a: 'Rm', id: 'rm', c: 16 },
+            { n: '1 Coríntios', a: '1Cor', id: '1co', c: 16 }, { n: '2 Coríntios', a: '2Cor', id: '2co', c: 13 }, { n: 'Gálatas', a: 'Gl', id: 'gl', c: 6 },
+            { n: 'Efésios', a: 'Ef', id: 'ef', c: 6 }, { n: 'Filipenses', a: 'Fl', id: 'fp', c: 4 }, { n: 'Colossenses', a: 'Cl', id: 'cl', c: 4 },
+            { n: '1 Tessalonicenses', a: '1Ts', id: '1ts', c: 5 }, { n: '2 Tessalonicenses', a: '2Ts', id: '2ts', c: 3 },
+            { n: '1 Timóteo', a: '1Tm', id: '1tm', c: 6 }, { n: '2 Timóteo', a: '2Tm', id: '2tm', c: 4 }, { n: 'Tito', a: 'Tt', id: 'tt', c: 3 },
+            { n: 'Filêmon', a: 'Fm', id: 'fm', c: 1 }, { n: 'Hebreus', a: 'Hb', id: 'hb', c: 13 }, { n: 'Tiago', a: 'Tg', id: 'tg', c: 5 },
+            { n: '1 Pedro', a: '1Pd', id: '1pe', c: 5 }, { n: '2 Pedro', a: '2Pd', id: '2pe', c: 3 }, { n: '1 João', a: '1Jo', id: '1jo', c: 5 },
+            { n: '2 João', a: '2Jo', id: '2jo', c: 1 }, { n: '3 João', a: '3Jo', id: '3jo', c: 1 }, { n: 'Judas', a: 'Jd', id: 'jd', c: 1 },
+            { n: 'Apocalipse', a: 'Ap', id: 'ap', c: 22 }
+        ];
+
+        function renderLivros(elId, livros) {
+            const el = document.getElementById(elId);
+            el.innerHTML = '';
+            livros.forEach(l => {
+                const btn = document.createElement('button');
+                btn.className = 'livro-btn';
+                btn.innerHTML = `<span class="nome">${l.n}</span><span class="abrev">${l.a} · ${l.c} cap.</span>`;
+                btn.onclick = () => abrirLeitor(l);
+                el.appendChild(btn);
+            });
+        }
+        renderLivros('lista-at', at);
+        renderLivros('lista-nt', nt);
+
+        function filtrarLivros(q) {
+            const f = q.toLowerCase();
+            renderLivros('lista-at', at.filter(l => l.n.toLowerCase().includes(f) || l.a.toLowerCase().includes(f)));
+            renderLivros('lista-nt', nt.filter(l => l.n.toLowerCase().includes(f) || l.a.toLowerCase().includes(f)));
+        }
+
+        // ===== LEITOR =====
+        let livroAtual = null, capAtual = 1;
+        let bibliaLocal = null;
+
+        // ==========================================
+  // SUBSTITUA DAQUI...
+  async function iniciarBibliaLocal() {
+    try {
+      let r = await fetch('../js/biblia.json');
+      if (!r.ok) r = await fetch('/js/biblia.json'); 
+      
+      if (r.ok) {
+        bibliaLocal = await r.json();
+        console.log("✅ SUCESSO: Arquivo biblia.json carregado na memória!");
+        console.log("🔍 Estrutura do arquivo carregado:", bibliaLocal); // Mostra o arquivo no Console!
+      } else {
+        console.warn("AVISO: biblia.json não encontrado nas pastas js.");
+      }
+    } catch (e) { 
+      console.error("ERRO: Falha ao carregar o arquivo JSON:", e);
+    }
+  }
+  iniciarBibliaLocal();
+
+  function abrirLeitor(livro) {
+    livroAtual = livro; capAtual = 1;
+    document.getElementById('leitor-titulo').textContent = livro.n;
+    document.getElementById('leitor').classList.add('aberto');
+    renderCap();
+  }
+  function fecharLeitor() { document.getElementById('leitor').classList.remove('aberto'); }
+  function mudarCap(d) {
+    const n = capAtual + d;
+    if (n < 1 || n > livroAtual.c) return;
+    capAtual = n; renderCap();
+  }
+
+ async function renderCap() {
+    document.getElementById('leitor-cap').textContent = `Capítulo ${capAtual} de ${livroAtual.c}`;
+    document.getElementById('btn-ant').disabled = capAtual === 1;
+    document.getElementById('btn-pro').disabled = capAtual === livroAtual.c;
+    
+    const corpo = document.getElementById('leitor-corpo');
+    corpo.innerHTML = cabecalhoCap() + `<div style="text-align:center;padding:20px;color:var(--cinza-texto);">Lendo Bíblia Ave Maria...</div>`;
+    corpo.scrollTop = 0;
+
+    // LEITURA LOCAL DEFINITIVA (COM BUSCA INTELIGENTE DE NOMES)
+    try {
+      if (bibliaLocal) {
+        let todosOsLivros = [];
+        if (bibliaLocal.antigoTestamento && bibliaLocal.novoTestamento) {
+          todosOsLivros = [...bibliaLocal.antigoTestamento, ...bibliaLocal.novoTestamento];
+        } else if (Array.isArray(bibliaLocal)) {
+          todosOsLivros = bibliaLocal;
+        }
+
+        // Limpa o nome do livro que você clicou no menu (ex: "1 Coríntios" -> "1corintios")
+        const alvoAberto = livroAtual.n.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f|\s]/g, "");
+        
+        const lDados = todosOsLivros.find(l => {
+          // Pega o título do arquivo JSON e tira os acentos
+          let tituloBase = String(l.titulo || l.nome || l.name || l.livro || "").toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+          
+          // O SEGREDO: Limpa prefixos como "São João", "Livro de Rute", "Evangelho de..."
+          tituloBase = tituloBase.replace(/^(sao |santo |santa |evangelho de |evangelho segundo |livro d[eao]s? )/g, "");
+          
+          // Transforma numerais romanos clássicos da Ave Maria (I, II, III) em números árabes (1, 2, 3)
+          tituloBase = tituloBase.replace(/^i /g, "1 ").replace(/^ii /g, "2 ").replace(/^iii /g, "3 ");
+          
+          const tituloFechado = tituloBase.replace(/\s+/g, "");
+          const abrev = String(l.sigla || l.abrev || l.abbrev || "").toLowerCase();
+
+          // Tenta bater o nome exato ou a sigla
+          if (tituloFechado === alvoAberto || (abrev && abrev === livroAtual.id)) return true;
+          // Tenta bater nomes pela metade (ex: "Atos" bater com "AtosdosApostolos")
+          if (tituloFechado !== "" && (tituloFechado.startsWith(alvoAberto) || alvoAberto.startsWith(tituloFechado))) return true;
+
+          return false;
+        });
+
+        if (lDados) {
+          const caps = lDados.capitulos || lDados.chapters;
+          if (caps && caps[capAtual - 1]) {
+             let versosBrutos = caps[capAtual - 1];
+             let versosFinais = [];
+
+             // Entra na lista de versículos
+             if (versosBrutos && typeof versosBrutos === 'object' && !Array.isArray(versosBrutos)) {
+                 if (versosBrutos.versiculos) versosBrutos = versosBrutos.versiculos;
+                 else if (versosBrutos.verses) versosBrutos = versosBrutos.verses;
+                 else versosBrutos = Object.values(versosBrutos);
+             }
+
+             if (Array.isArray(versosBrutos)) {
+                 versosFinais = versosBrutos.map(v => {
+                     if (typeof v === 'string') return v;
+                     if (v && v.texto) return v.texto;
+                     if (v && v.text) return v.text;
+                     return typeof v === 'object' ? JSON.stringify(v) : String(v);
+                 });
+             }
+
+             // Remove espaços vazios
+             versosFinais = versosFinais.filter(v => v !== undefined && v !== null && String(v).trim() !== "");
+             
+             if (versosFinais.length > 0) {
+                 exibirVersiculos(versosFinais, 'Bíblia Ave Maria');
+                 return; // SUCESSO ABSOLUTO!
+             }
+          }
+        }
+      }
+    } catch (e) {
+      console.error("Erro interno no leitor:", e);
+    }
+
+    // Plano B online
+    try {
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 4000);
+      
+      const r = await fetch(`https://www.abibliadigital.com.br/api/verses/nvi/${livroAtual.id}/${capAtual}`, { signal: controller.signal });
+      clearTimeout(timeoutId);
+      
+      if (!r.ok) throw new Error(`Status da API: ${r.status}`);
+      
+      const d = await r.json();
+      exibirVersiculos(d.verses.map(v=>v.text), 'Bíblia NVI · Online');
+    } catch (e) {
+      corpo.innerHTML = cabecalhoCap() + `
+        <div style="background:rgba(201,168,76,0.10);border:1px solid rgba(201,168,76,0.30);border-radius:10px;padding:14px;font-size:13px;color:var(--dourado-escuro);line-height:1.65;text-align:center;margin: 0 16px;">
+          ⚠️ <strong>O livro não foi encontrado.</strong><br><br>
+          Para descobrirmos o motivo, aperte <strong>F12</strong>, abra a setinha do seu JSON no Console e veja como eles escreveram o nome desse livro lá dentro.
+        </div>`;
+    }
+  }
+
+        function cabecalhoCap() {
+            return `<div style="text-align:center;padding:24px 0 16px;">
+      <div style="font-family:var(--fonte-titulo);font-size:22px;font-weight:700;color:var(--azul-royal)">${livroAtual.n}</div>
+      <div style="font-size:14px;color:var(--cinza-texto);margin-top:4px">Capítulo ${capAtual}</div>
+      <div style="width:40px;height:2px;background:var(--dourado);border-radius:2px;margin:12px auto 0;"></div>
+    </div>`;
+        }
+
+        function exibirVersiculos(versiculos, fonte) {
+            const corpo = document.getElementById('leitor-corpo');
+            let html = cabecalhoCap();
+            html += `<div style="text-align:center;font-size:11px;color:var(--cinza-texto);margin-bottom:16px;letter-spacing:0.04em;">${fonte}</div>`;
+            versiculos.forEach((t, i) => {
+                html += `<div class="v-linha"><span class="v-num">${i + 1}</span><span class="v-txt">${t}</span></div>`;
+            });
+            corpo.innerHTML = html;
+            corpo.scrollTop = 0;
+        }
+    </script>
+</body>
+
+</html>

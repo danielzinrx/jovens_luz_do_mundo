@@ -1,0 +1,930 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Intenções de Oração — Jovens Luz do Mundo</title>
+    <link rel="stylesheet" href="../css/style.css" />
+    <link rel="icon" type="image/svg+xml" href="../img/gemini-svg.svg" />
+    <style>
+        /* ===== BANNER TOPO ===== */
+        .intencoes-banner {
+            background: linear-gradient(135deg, var(--rosa-coral-escuro), var(--rosa-coral));
+            margin: 16px 16px 0;
+            border-radius: var(--raio);
+            padding: 18px 20px;
+            display: flex;
+            gap: 14px;
+            align-items: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .intencoes-banner::after {
+            content: '🙏';
+            position: absolute;
+            right: 14px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 48px;
+            opacity: 0.18;
+        }
+
+        .banner-icon {
+            width: 46px;
+            height: 46px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.18);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            font-size: 22px;
+        }
+
+        .banner-texto h3 {
+            font-family: var(--fonte-titulo);
+            font-size: 16px;
+            font-weight: 700;
+            color: #fff;
+            margin-bottom: 3px;
+        }
+
+        .banner-texto p {
+            font-size: 12px;
+            color: rgba(255, 255, 255, 0.80);
+            line-height: 1.5;
+        }
+
+        /* ===== CONTADOR ===== */
+        .contador-bar {
+            margin: 14px 16px 0;
+            background: var(--branco-puro);
+            border-radius: var(--raio-sm);
+            padding: 12px 16px;
+            box-shadow: var(--sombra);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .contador-num {
+            font-family: var(--fonte-titulo);
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--rosa-coral);
+        }
+
+        .contador-txt {
+            font-size: 13px;
+            color: var(--cinza-texto);
+            line-height: 1.4;
+        }
+
+        /* ===== BOTÃO NOVA INTENÇÃO ===== */
+        .btn-nova {
+            margin: 14px 16px 0;
+            width: calc(100% - 32px);
+            padding: 15px;
+            background: var(--rosa-coral);
+            border: none;
+            border-radius: var(--raio-sm);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            cursor: pointer;
+            transition: var(--transicao);
+        }
+
+        .btn-nova:hover {
+            background: var(--rosa-coral-escuro);
+        }
+
+        .btn-nova span {
+            font-family: var(--fonte-titulo);
+            font-size: 14px;
+            font-weight: 600;
+            color: #fff;
+            letter-spacing: 0.05em;
+        }
+
+        /* ===== LISTA DE INTENÇÕES ===== */
+        .intencao-card {
+            background: var(--branco-puro);
+            border-radius: var(--raio-sm);
+            margin: 10px 16px 0;
+            padding: 16px;
+            box-shadow: var(--sombra);
+            border-left: 4px solid var(--rosa-coral-claro);
+            transition: var(--transicao);
+        }
+
+        .intencao-card.urgente {
+            border-left-color: var(--rosa-coral-escuro);
+        }
+
+        .intencao-card.rezei {
+            border-left-color: var(--dourado);
+            opacity: 0.75;
+        }
+
+        .intencao-topo {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            gap: 10px;
+            margin-bottom: 8px;
+        }
+
+        .intencao-nome {
+            font-family: var(--fonte-titulo);
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--texto-escuro);
+        }
+
+        .intencao-tipo {
+            font-size: 10px;
+            font-weight: 700;
+            padding: 2px 8px;
+            border-radius: 10px;
+            letter-spacing: 0.05em;
+            flex-shrink: 0;
+        }
+
+        .tipo-saude {
+            background: rgba(232, 97, 122, 0.12);
+            color: var(--rosa-coral-escuro);
+        }
+
+        .tipo-familia {
+            background: rgba(27, 79, 155, 0.10);
+            color: var(--azul-royal);
+        }
+
+        .tipo-trabalho {
+            background: rgba(201, 168, 76, 0.15);
+            color: var(--dourado-escuro);
+        }
+
+        .tipo-conversao {
+            background: rgba(40, 130, 90, 0.10);
+            color: #1B6E3A;
+        }
+
+        .tipo-gracas {
+            background: rgba(201, 168, 76, 0.20);
+            color: var(--dourado-escuro);
+        }
+
+        .tipo-outro {
+            background: rgba(90, 90, 90, 0.10);
+            color: var(--cinza-texto);
+        }
+
+        .intencao-texto {
+            font-size: 14px;
+            color: var(--cinza-texto);
+            line-height: 1.65;
+            margin-bottom: 10px;
+        }
+
+        .intencao-rodape {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 8px;
+        }
+
+        .intencao-tempo {
+            font-size: 11px;
+            color: var(--cinza-texto);
+            opacity: 0.7;
+        }
+
+        .urgente-badge {
+            font-size: 10px;
+            font-weight: 700;
+            color: var(--rosa-coral-escuro);
+            background: rgba(232, 97, 122, 0.12);
+            padding: 2px 8px;
+            border-radius: 10px;
+            letter-spacing: 0.04em;
+        }
+
+        .btn-rezei {
+            background: transparent;
+            border: 1.5px solid var(--dourado);
+            border-radius: 20px;
+            padding: 5px 14px;
+            font-family: var(--fonte-titulo);
+            font-size: 11px;
+            font-weight: 600;
+            color: var(--dourado-escuro);
+            cursor: pointer;
+            transition: var(--transicao);
+            letter-spacing: 0.04em;
+        }
+
+        .btn-rezei:hover {
+            background: var(--dourado);
+            color: #fff;
+        }
+
+        .btn-rezei.feito {
+            background: var(--dourado);
+            color: #fff;
+            opacity: 0.7;
+            cursor: default;
+        }
+
+        /* ===== VAZIO ===== */
+        .vazio {
+            text-align: center;
+            padding: 40px 24px;
+            color: var(--cinza-texto);
+        }
+
+        .vazio-emoji {
+            font-size: 40px;
+            margin-bottom: 12px;
+        }
+
+        .vazio h4 {
+            font-family: var(--fonte-titulo);
+            font-size: 16px;
+            color: var(--texto-escuro);
+            margin-bottom: 6px;
+        }
+
+        .vazio p {
+            font-size: 13px;
+            line-height: 1.6;
+        }
+
+        /* ===== MODAL FORMULÁRIO ===== */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 300;
+            align-items: flex-end;
+        }
+
+        .modal-overlay.aberto {
+            display: flex;
+        }
+
+        .modal-box {
+            background: var(--branco-gelo);
+            border-radius: 20px 20px 0 0;
+            width: 100%;
+            padding: 24px 16px 40px;
+            animation: slideUp 0.3s ease;
+            max-height: 92vh;
+            overflow-y: auto;
+        }
+
+        @keyframes slideUp {
+            from {
+                transform: translateY(100%);
+            }
+
+            to {
+                transform: translateY(0);
+            }
+        }
+
+        .modal-titulo {
+            font-family: var(--fonte-titulo);
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--texto-escuro);
+            margin-bottom: 4px;
+        }
+
+        .modal-sub {
+            font-size: 13px;
+            color: var(--cinza-texto);
+            margin-bottom: 20px;
+        }
+
+        /* Anonimo toggle */
+        .anonimo-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: var(--branco-puro);
+            border-radius: var(--raio-sm);
+            padding: 12px 14px;
+            margin-bottom: 14px;
+            box-shadow: var(--sombra);
+            cursor: pointer;
+        }
+
+        .anonimo-row span {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--texto-escuro);
+        }
+
+        .anonimo-row small {
+            font-size: 12px;
+            color: var(--cinza-texto);
+            display: block;
+        }
+
+        .toggle-wrap {
+            position: relative;
+            width: 44px;
+            height: 24px;
+        }
+
+        .toggle-wrap input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .toggle-slider {
+            position: absolute;
+            inset: 0;
+            background: var(--cinza-suave);
+            border-radius: 12px;
+            transition: var(--transicao);
+            cursor: pointer;
+        }
+
+        .toggle-slider::before {
+            content: '';
+            position: absolute;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            background: #fff;
+            top: 3px;
+            left: 3px;
+            transition: var(--transicao);
+            box-shadow: 0 1px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        .toggle-wrap input:checked+.toggle-slider {
+            background: var(--rosa-coral);
+        }
+
+        .toggle-wrap input:checked+.toggle-slider::before {
+            transform: translateX(20px);
+        }
+
+        /* Campos */
+        .campo-label {
+            font-size: 12px;
+            font-weight: 700;
+            letter-spacing: 0.08em;
+            color: var(--azul-royal);
+            text-transform: uppercase;
+            margin-bottom: 6px;
+            display: block;
+        }
+
+        .campo-input {
+            width: 100%;
+            padding: 12px 14px;
+            border: 1.5px solid var(--cinza-suave);
+            border-radius: var(--raio-sm);
+            font-family: var(--fonte-corpo);
+            font-size: 14px;
+            color: var(--texto-escuro);
+            background: var(--branco-puro);
+            outline: none;
+            transition: var(--transicao);
+            margin-bottom: 14px;
+            display: block;
+        }
+
+        .campo-input:focus {
+            border-color: var(--rosa-coral);
+        }
+
+        .campo-input:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+        }
+
+        textarea.campo-input {
+            resize: none;
+            height: 110px;
+            line-height: 1.6;
+        }
+
+        /* Tipo de intenção */
+        .tipo-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 8px;
+            margin-bottom: 14px;
+        }
+
+        .tipo-opcao input {
+            display: none;
+        }
+
+        .tipo-opcao label {
+            display: block;
+            text-align: center;
+            padding: 9px 4px;
+            border-radius: var(--raio-sm);
+            border: 1.5px solid var(--cinza-suave);
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transicao);
+            color: var(--cinza-texto);
+            background: var(--branco-puro);
+        }
+
+        .tipo-opcao label .t-emoji {
+            display: block;
+            font-size: 18px;
+            margin-bottom: 3px;
+        }
+
+        .tipo-opcao input:checked+label {
+            border-color: var(--rosa-coral);
+            background: rgba(232, 97, 122, 0.08);
+            color: var(--rosa-coral-escuro);
+        }
+
+        /* Urgente row */
+        .urgente-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: var(--branco-puro);
+            border-radius: var(--raio-sm);
+            padding: 12px 14px;
+            margin-bottom: 20px;
+            box-shadow: var(--sombra);
+        }
+
+        .urgente-row span {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--texto-escuro);
+        }
+
+        .urgente-row small {
+            font-size: 12px;
+            color: var(--cinza-texto);
+            display: block;
+        }
+
+        /* Botões modal */
+        .modal-btns {
+            display: flex;
+            gap: 10px;
+        }
+
+        .btn-cancelar {
+            flex: 1;
+            padding: 14px;
+            border-radius: var(--raio-sm);
+            border: 1.5px solid var(--cinza-suave);
+            background: transparent;
+            font-family: var(--fonte-titulo);
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--cinza-texto);
+            cursor: pointer;
+            transition: var(--transicao);
+        }
+
+        .btn-cancelar:hover {
+            background: var(--cinza-suave);
+        }
+
+        .btn-enviar {
+            flex: 2;
+            padding: 14px;
+            border-radius: var(--raio-sm);
+            border: none;
+            background: var(--rosa-coral);
+            font-family: var(--fonte-titulo);
+            font-size: 14px;
+            font-weight: 600;
+            color: #fff;
+            cursor: pointer;
+            transition: var(--transicao);
+            letter-spacing: 0.04em;
+        }
+
+        .btn-enviar:hover {
+            background: var(--rosa-coral-escuro);
+        }
+
+        /* Toast confirmação */
+        .toast {
+            position: fixed;
+            bottom: 90px;
+            left: 50%;
+            transform: translateX(-50%) translateY(20px);
+            background: var(--texto-escuro);
+            color: #fff;
+            padding: 12px 20px;
+            border-radius: 30px;
+            font-size: 13px;
+            font-weight: 600;
+            opacity: 0;
+            transition: all 0.3s ease;
+            pointer-events: none;
+            white-space: nowrap;
+            z-index: 400;
+        }
+
+        .toast.show {
+            opacity: 1;
+            transform: translateX(-50%) translateY(0);
+        }
+    </style>
+</head>
+
+<body>
+
+    <header class="page-header">
+        <a href="../index.html" class="voltar">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5"
+                stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="15 18 9 12 15 6" />
+            </svg>
+        </a>
+        <h2>Intenções de Oração</h2>
+    </header>
+
+    <!-- Banner -->
+    <div class="intencoes-banner">
+        <div class="banner-icon">💗</div>
+        <div class="banner-texto">
+            <h3>Rezemos juntos</h3>
+            <p>Compartilhe sua intenção e o grupo se une em oração por você por 24 horas.</p>
+        </div>
+    </div>
+
+    <!-- Contador de intenções ativas -->
+    <div class="contador-bar">
+        <div class="contador-num" id="contador">0</div>
+        <div class="contador-txt">intenções ativas<br><span style="font-size:11px;opacity:0.7;">Expiram em 24h
+                automaticamente</span></div>
+    </div>
+
+    <!-- Botão nova intenção -->
+    <button class="btn-nova" onclick="abrirModal()">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5"
+            stroke-linecap="round" stroke-linejoin="round">
+            <line x1="12" y1="5" x2="12" y2="19" />
+            <line x1="5" y1="12" x2="19" y2="12" />
+        </svg>
+        <span>Nova Intenção de Oração</span>
+    </button>
+
+    <!-- Lista -->
+    <div id="lista-intencoes" style="padding-bottom:90px;"></div>
+
+    <!-- MODAL FORMULÁRIO -->
+    <div id="modal" class="modal-overlay" onclick="fecharModalFora(event)">
+        <div class="modal-box">
+            <div class="modal-titulo">Nova Intenção</div>
+            <div class="modal-sub">Sua intenção ficará visível por 24 horas para o grupo rezar por você.</div>
+
+            <!-- Anônimo -->
+            <div class="anonimo-row" onclick="toggleAnonimo()">
+                <div>
+                    <span>Permanecer anônimo</span>
+                    <small>Sua intenção aparecerá sem seu nome</small>
+                </div>
+                <label class="toggle-wrap" onclick="event.stopPropagation()">
+                    <input type="checkbox" id="toggle-anonimo" onchange="toggleAnonimo()">
+                    <span class="toggle-slider"></span>
+                </label>
+            </div>
+
+            <!-- Nome -->
+            <label class="campo-label" for="campo-nome">Seu nome</label>
+            <input type="text" id="campo-nome" class="campo-input" placeholder="Como você se chama?" maxlength="40" />
+
+            <!-- Intenção -->
+            <label class="campo-label" for="campo-intencao">Sua intenção</label>
+            <textarea id="campo-intencao" class="campo-input"
+                placeholder="Escreva seu pedido de oração aqui... Seja breve ou detalhado, do jeito que preferir."
+                maxlength="300"></textarea>
+            <div style="text-align:right;font-size:11px;color:var(--cinza-texto);margin-top:-10px;margin-bottom:14px;">
+                <span id="contador-chars">0</span>/300
+            </div>
+
+            <!-- Tipo -->
+            <label class="campo-label">Tipo de intenção</label>
+            <div class="tipo-grid">
+                <div class="tipo-opcao">
+                    <input type="radio" name="tipo" id="t-saude" value="saude" checked>
+                    <label for="t-saude"><span class="t-emoji">🏥</span>Saúde</label>
+                </div>
+                <div class="tipo-opcao">
+                    <input type="radio" name="tipo" id="t-familia" value="familia">
+                    <label for="t-familia"><span class="t-emoji">👨‍👩‍👧</span>Família</label>
+                </div>
+                <div class="tipo-opcao">
+                    <input type="radio" name="tipo" id="t-trabalho" value="trabalho">
+                    <label for="t-trabalho"><span class="t-emoji">💼</span>Trabalho</label>
+                </div>
+                <div class="tipo-opcao">
+                    <input type="radio" name="tipo" id="t-conversao" value="conversao">
+                    <label for="t-conversao"><span class="t-emoji">✝️</span>Conversão</label>
+                </div>
+                <div class="tipo-opcao">
+                    <input type="radio" name="tipo" id="t-gracas" value="gracas">
+                    <label for="t-gracas"><span class="t-emoji">🙏</span>Ação de graças</label>
+                </div>
+                <div class="tipo-opcao">
+                    <input type="radio" name="tipo" id="t-outro" value="outro">
+                    <label for="t-outro"><span class="t-emoji">💙</span>Outro</label>
+                </div>
+            </div>
+
+            <!-- Urgente -->
+            <div class="urgente-row">
+                <div>
+                    <span>Pedido urgente</span>
+                    <small>Destaca a intenção para chamar atenção do grupo</small>
+                </div>
+                <label class="toggle-wrap">
+                    <input type="checkbox" id="toggle-urgente">
+                    <span class="toggle-slider"></span>
+                </label>
+            </div>
+
+            <div class="modal-btns">
+                <button class="btn-cancelar" onclick="fecharModal()">Cancelar</button>
+                <button class="btn-enviar" onclick="salvarIntencao()">
+                    Enviar Intenção 🙏
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast -->
+    <div class="toast" id="toast"></div>
+
+    <!-- NAV -->
+    <nav class="nav-bottom">
+        <a href="../index.html" class="nav-item"><svg width="22" height="22" viewBox="0 0 24 24" fill="none"
+                stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
+            </svg><span>Início</span></a>
+        <a href="biblia.html" class="nav-item"><svg width="22" height="22" viewBox="0 0 24 24" fill="none"
+                stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" />
+                <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z" />
+            </svg><span>Bíblia</span></a>
+        <a href="terco.html" class="nav-item"><svg width="22" height="22" viewBox="0 0 24 24" fill="none"
+                stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="3" />
+                <circle cx="12" cy="4" r="2" />
+                <circle cx="20" cy="12" r="2" />
+                <circle cx="12" cy="20" r="2" />
+                <circle cx="4" cy="12" r="2" />
+                <line x1="12" y1="6" x2="12" y2="9" />
+                <line x1="15" y1="12" x2="18" y2="12" />
+                <line x1="12" y1="15" x2="12" y2="18" />
+                <line x1="6" y1="12" x2="9" y2="12" />
+            </svg><span>Terço</span></a>
+        <a href="santos.html" class="nav-item"><svg width="22" height="22" viewBox="0 0 24 24" fill="none"
+                stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="8" r="4" />
+                <path d="M6 20v-2a6 6 0 0 1 12 0v2" />
+            </svg><span>Santos</span></a>
+        <a href="avisos.html" class="nav-item"><svg width="22" height="22" viewBox="0 0 24 24" fill="none"
+                stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9" />
+                <path d="M13.73 21a2 2 0 0 1-3.46 0" />
+            </svg><span>Avisos</span></a>
+    </nav>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+        import { getFirestore, collection, addDoc, onSnapshot, updateDoc, doc, query, orderBy, where, Timestamp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyCBXlGzF46hAmVpm7mJ0EEKr6y2-woIClo",
+            authDomain: "jovens-luz-do-mundo-608cd.firebaseapp.com",
+            projectId: "jovens-luz-do-mundo-608cd",
+            storageBucket: "jovens-luz-do-mundo-608cd.firebasestorage.app",
+            messagingSenderId: "519874530522",
+            appId: "1:519874530522:web:50adce994ab335fc6829e3"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        const tipoLabels = {
+            saude: { label: 'Saúde', classe: 'tipo-saude' },
+            familia: { label: 'Família', classe: 'tipo-familia' },
+            trabalho: { label: 'Trabalho', classe: 'tipo-trabalho' },
+            conversao: { label: 'Conversão', classe: 'tipo-conversao' },
+            gracas: { label: 'Ação de graças', classe: 'tipo-gracas' },
+            outro: { label: 'Outro', classe: 'tipo-outro' },
+        };
+
+        // ===== TEMPO RELATIVO =====
+        function tempoRelativo(ts) {
+            const diff = Date.now() - ts;
+            const min = Math.floor(diff / 60000);
+            const h = Math.floor(diff / 3600000);
+            if (min < 1) return 'agora mesmo';
+            if (min < 60) return `há ${min} min`;
+            if (h < 24) return `há ${h}h`;
+            return 'há mais de 24h';
+        }
+
+        function tempoRestante(ts) {
+            const restante = 24 * 60 * 60 * 1000 - (Date.now() - ts);
+            const h = Math.floor(restante / 3600000);
+            const m = Math.floor((restante % 3600000) / 60000);
+            return `Expira em ${h}h ${m}min`;
+        }
+
+        function escapeHtml(str) {
+            return str
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;');
+        }
+
+        // ===== ESCUTAR INTENÇÕES EM TEMPO REAL =====
+        const vinte4h = Timestamp.fromMillis(Date.now() - 24 * 60 * 60 * 1000);
+        const q = query(
+            collection(db, "intencoes"),
+            where("criadaEm", ">", vinte4h),
+            orderBy("criadaEm", "desc")
+        );
+
+        onSnapshot(q, (snapshot) => {
+            const intencoes = [];
+            snapshot.forEach(d => intencoes.push({ id: d.id, ...d.data() }));
+            renderLista(intencoes);
+        });
+
+        function renderLista(intencoes) {
+            document.getElementById('contador').textContent = intencoes.length;
+            const el = document.getElementById('lista-intencoes');
+            const rezeiIds = JSON.parse(localStorage.getItem('jlm_rezei') || '[]');
+
+            if (intencoes.length === 0) {
+                el.innerHTML = `
+        <div class="vazio">
+          <div class="vazio-emoji">🕊️</div>
+          <h4>Nenhuma intenção ativa</h4>
+          <p>Seja o primeiro a compartilhar<br>sua intenção de oração com o grupo.</p>
+        </div>`;
+                return;
+            }
+
+            // Urgentes primeiro
+            const ordenadas = [...intencoes].sort((a, b) => {
+                if (a.urgente && !b.urgente) return -1;
+                if (!a.urgente && b.urgente) return 1;
+                return b.criadaEm.toMillis() - a.criadaEm.toMillis();
+            });
+
+            el.innerHTML = '';
+            ordenadas.forEach(i => {
+                const tipo = tipoLabels[i.tipo] || tipoLabels.outro;
+                const jaRezei = rezeiIds.includes(i.id);
+                const ts = i.criadaEm.toMillis();
+                const card = document.createElement('div');
+                card.className = `intencao-card${i.urgente ? ' urgente' : ''}${jaRezei ? ' rezei' : ''}`;
+                card.innerHTML = `
+        <div class="intencao-topo">
+          <div class="intencao-nome">
+            ${i.urgente ? '<span class="urgente-badge">🔴 Urgente</span> ' : ''}
+            ${escapeHtml(i.nome)}
+          </div>
+          <span class="intencao-tipo ${tipo.classe}">${tipo.label}</span>
+        </div>
+        <div class="intencao-texto">${escapeHtml(i.intencao)}</div>
+        <div class="intencao-rodape">
+          <span class="intencao-tempo">${tempoRelativo(ts)} · ${tempoRestante(ts)}</span>
+          <button class="btn-rezei ${jaRezei ? 'feito' : ''}"
+            data-id="${i.id}"
+            ${jaRezei ? 'disabled' : ''}>
+            ${jaRezei ? '✓ Rezei' : '🙏 Rezei por esta intenção'}
+          </button>
+        </div>`;
+
+                card.querySelector('.btn-rezei')?.addEventListener('click', function () {
+                    marcarRezei(i.id, this);
+                });
+
+                el.appendChild(card);
+            });
+        }
+
+        // ===== MARCAR "REZEI" =====
+        function marcarRezei(id, btn) {
+            const rezeiIds = JSON.parse(localStorage.getItem('jlm_rezei') || '[]');
+            if (!rezeiIds.includes(id)) {
+                rezeiIds.push(id);
+                localStorage.setItem('jlm_rezei', JSON.stringify(rezeiIds));
+            }
+            btn.textContent = '✓ Rezei';
+            btn.classList.add('feito');
+            btn.disabled = true;
+            btn.closest('.intencao-card').classList.add('rezei');
+            mostrarToast('Que Deus atenda seu pedido! 🙏');
+        }
+
+        // ===== SALVAR INTENÇÃO NO FIRESTORE =====
+        async function salvarIntencao() {
+            const anonimo = document.getElementById('toggle-anonimo').checked;
+            const nome = anonimo ? 'Anônimo' : document.getElementById('campo-nome').value.trim();
+            const intencao = document.getElementById('campo-intencao').value.trim();
+            const tipo = document.querySelector('input[name="tipo"]:checked')?.value || 'outro';
+            const urgente = document.getElementById('toggle-urgente').checked;
+
+            if (!nome && !anonimo) { highlight('campo-nome', 'Digite seu nome ou marque como anônimo.'); return; }
+            if (!intencao) { highlight('campo-intencao', 'Escreva sua intenção de oração.'); return; }
+            if (intencao.length < 10) { highlight('campo-intencao', 'Escreva um pouco mais sobre seu pedido.'); return; }
+
+            try {
+                await addDoc(collection(db, "intencoes"), {
+                    nome: nome || 'Anônimo',
+                    intencao,
+                    tipo,
+                    urgente,
+                    criadaEm: Timestamp.now(),
+                });
+                fecharModal();
+                mostrarToast('Intenção enviada! O grupo reza por você 🙏');
+            } catch (e) {
+                mostrarToast('Erro ao enviar. Tente novamente.');
+                console.error(e);
+            }
+        }
+
+        // ===== MODAL =====
+        window.abrirModal = () => {
+            document.getElementById('modal').classList.add('aberto');
+            document.getElementById('campo-nome').focus();
+        };
+        window.fecharModal = () => {
+            document.getElementById('modal').classList.remove('aberto');
+            resetForm();
+        };
+        window.fecharModalFora = (e) => {
+            if (e.target === document.getElementById('modal')) window.fecharModal();
+        };
+        window.toggleAnonimo = () => {
+            const cb = document.getElementById('toggle-anonimo');
+            const nome = document.getElementById('campo-nome');
+            if (document.activeElement !== cb) cb.checked = !cb.checked;
+            nome.disabled = cb.checked;
+            nome.value = cb.checked ? '' : nome.value;
+            nome.placeholder = cb.checked ? 'Anônimo' : 'Como você se chama?';
+        };
+        window.salvarIntencao = salvarIntencao;
+
+        document.getElementById('campo-intencao').addEventListener('input', function () {
+            document.getElementById('contador-chars').textContent = this.value.length;
+        });
+
+        function resetForm() {
+            document.getElementById('campo-nome').value = '';
+            document.getElementById('campo-intencao').value = '';
+            document.getElementById('toggle-anonimo').checked = false;
+            document.getElementById('toggle-urgente').checked = false;
+            document.getElementById('campo-nome').disabled = false;
+            document.getElementById('campo-nome').placeholder = 'Como você se chama?';
+            document.getElementById('contador-chars').textContent = '0';
+            document.querySelector('input[name="tipo"][value="saude"]').checked = true;
+        }
+
+        function highlight(id, msg) {
+            const el = document.getElementById(id);
+            el.style.borderColor = 'var(--rosa-coral-escuro)';
+            el.focus();
+            setTimeout(() => el.style.borderColor = '', 1500);
+            mostrarToast('⚠️ ' + msg);
+        }
+
+        function mostrarToast(msg) {
+            const t = document.getElementById('toast');
+            t.textContent = msg;
+            t.classList.add('show');
+            setTimeout(() => t.classList.remove('show'), 2800);
+        }
+    </script>
+</body>
+
+</html>

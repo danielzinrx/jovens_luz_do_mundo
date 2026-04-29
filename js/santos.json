@@ -1,0 +1,81 @@
+[
+  {
+    "nome": "São José", "emoji": "🔨", "data": "19 de Março",
+    "categorias": ["Pai Adotivo de Jesus", "Carpinteiro", "Padroeiro da Igreja"],
+    "bio": [
+      { "titulo": "Esposo de Maria", "texto": "São José foi escolhido por Deus para ser o esposo da Virgem Maria e pai terreno de Jesus Cristo. Era descendente da casa de Davi, conforme anunciado pelas profecias messiânicas." },
+      { "titulo": "O Carpinteiro de Nazaré", "texto": "José era carpinteiro em Nazaré. Trabalhou com as mãos para sustentar a Sagrada Família, ensinando o ofício ao próprio Jesus. É modelo de trabalhador honesto e pai dedicado." },
+      { "titulo": "Guardião da Sagrada Família", "texto": "José protegeu Maria e Jesus durante a fuga para o Egito, fugindo da perseguição de Herodes. Retornou depois para Nazaré, onde criou Jesus com amor e sabedoria." }
+    ]
+  },
+  {
+    "nome": "São João Bosco", "emoji": "👨‍👦", "data": "31 de Janeiro",
+    "categorias": ["Sacerdote", "Fundador", "Padroeiro da Juventude"],
+    "bio": [
+      { "titulo": "O Pai dos Jovens", "texto": "João Bosco nasceu na Itália em 1815. De família muito pobre, perdeu o pai cedo e foi criado por sua mãe, Mamãe Margarida. Desde pequeno, sentiu o chamado para ajudar os jovens." },
+      { "titulo": "O Sistema Preventivo", "texto": "Fundou o Oratório de São Francisco de Sales, acolhendo meninos de rua em Turim. Ele criou o 'Sistema Preventivo', baseado na Razão, Religião e Amorevolezza (bondade), revolucionando a educação." },
+      { "titulo": "Legado", "texto": "Faleceu em 1888 e foi canonizado em 1934. João Paulo II o aclamou oficialmente como 'Pai e Mestre da Juventude'. Seu lema era 'Dai-me almas e ficai com o resto'." }
+    ]
+  },
+  {
+    "nome": "Beato Carlo Acutis", "emoji": "💻", "data": "12 de Outubro",
+    "categorias": ["Jovem", "Eucaristia", "Internet"],
+    "bio": [
+      { "titulo": "O Jovem Normal", "texto": "Carlo Acutis nasceu em 1991 em Londres e cresceu em Milão, Itália. Era um adolescente comum que jogava videogame, gostava de futebol e era apaixonado por computação." },
+      { "titulo": "O Padroeiro da Internet", "texto": "Usou suas habilidades como programador para criar um site que catalogava todos os Milagres Eucarísticos do mundo, espalhando o Evangelho pela era digital." },
+      { "titulo": "Morte e Beatificação", "texto": "Faleceu aos 15 anos (2006) devido a uma leucemia fulminante. Foi beatificado em 2020 em Assis. Ele provou que é possível ser santo de calça jeans e tênis." }
+    ]
+  },
+  {
+    "nome": "Beata Chiara Luce", "emoji": "🎾", "data": "29 de Outubro",
+    "categorias": ["Jovem", "Itália", "Movimento dos Focolares"],
+    "bio": [
+      { "titulo": "Alegria Contagiante", "texto": "Chiara Badano nasceu na Itália em 1971. Era uma jovem cheia de vida, adorava esportes, música e sair com os amigos. Fazia parte do Movimento dos Focolares e tinha uma fé radiante." },
+      { "titulo": "A Doença", "texto": "Aos 17 anos, enquanto jogava tênis, sentiu uma dor aguda. Foi diagnosticada com câncer ósseo. Apesar das dores terríveis, ela recusou morfina para 'não perder a lucidez e poder oferecer a dor a Jesus'." },
+      { "titulo": "Rumo ao Céu", "texto": "Faleceu em 1990, aos 18 anos. Suas últimas palavras para a mãe foram: 'Tchau, seja feliz, porque eu sou!'. Foi beatificada em 2010." }
+    ]
+  },
+  {
+    "nome": "São Tarcísio", "emoji": "🥖", "data": "15 de Agosto",
+    "categorias": ["Mártir", "Eucaristia", "Padroeiro dos Coroinhas"],
+    "bio": [
+      { "titulo": "O Jovem Acólito", "texto": "Tarcísio era um menino cristão que viveu em Roma no século III, durante a dura perseguição do imperador Valeriano. Ele ajudava o Papa Sixto II nas missas secretas nas catacumbas." },
+      { "titulo": "A Missão Perigosa", "texto": "Os cristãos presos precisavam receber a Eucaristia antes de serem executados. Sendo apenas uma criança, Tarcísio se ofereceu para levar a hóstia escondida, achando que ninguém suspeitaria dele." },
+      { "titulo": "O Martírio", "texto": "No caminho, foi abordado por jovens pagãos que queriam ver o que ele escondia no peito. Recusando-se a entregar o Corpo de Cristo, foi apedrejado até a morte, protegendo a Eucaristia com a própria vida." }
+    ]
+  },
+  {
+    "nome": "Santa Dulce dos Pobres", "emoji": "🏥", "data": "13 de Agosto",
+    "categorias": ["Brasil", "Caridade", "Irmã Dulce"],
+    "bio": [
+      { "titulo": "O Anjo Bom da Bahia", "texto": "Maria Rita de Souza Brito Lopes Pontes nasceu em Salvador, em 1914. Desde cedo, acolhia mendigos e doentes em sua casa. Entrou para a vida religiosa e adotou o nome de Irmã Dulce." },
+      { "titulo": "O Galinheiro", "texto": "Sem ter onde abrigar os doentes que recolhia nas ruas, pediu permissão à superiora para usar o galinheiro do convento. Esse foi o embrião do Hospital Santo Antônio, um dos maiores complexos de saúde do Brasil." },
+      { "titulo": "A Primeira Santa Brasileira", "texto": "Doou sua vida inteira aos mais necessitados, com uma saúde frágil e dormindo sentada numa cadeira por anos devido a problemas respiratórios. Foi canonizada pelo Papa Francisco em 2019." }
+    ]
+  },
+  {
+    "nome": "Santa Teresinha", "emoji": "🌸", "data": "1º de Outubro",
+    "categorias": ["Doutora da Igreja", "Carmelita", "Padroeira das Missões"],
+    "bio": [
+      { "titulo": "A Pequena Flor", "texto": "Nasceu na França em 1873. Perdeu a mãe muito cedo e entrou para o Carmelo de Lisieux com apenas 15 anos, com autorização especial do Papa." },
+      { "titulo": "A Pequena Via", "texto": "Desenvolveu a teologia da 'Pequena Via', ensinando que a santidade não consiste em grandes feitos extraordinários, mas em fazer as pequenas coisas do dia a dia com imenso amor a Deus." },
+      { "titulo": "Chuva de Rosas", "texto": "Faleceu de tuberculose aos 24 anos, prometendo passar seu céu fazendo o bem na terra e enviando uma 'chuva de rosas' (graças) aos que pedissem sua intercessão." }
+    ]
+  },
+  {
+    "nome": "São João Paulo II", "emoji": "✝️", "data": "22 de Outubro",
+    "categorias": ["Papa", "Polônia", "Jovens", "Contemporâneo"],
+    "bio": [
+      { "titulo": "O Papa da Juventude", "texto": "Karol Józef Wojtyła nasceu na Polônia, em 1920. Eleito Papa em 1978, foi o primeiro Papa não italiano em 455 anos e um dos maiores defensores da família e da vida." },
+      { "titulo": "Legado para os Jovens", "texto": "João Paulo II convocou as famosas 'Jornadas Mundiais da Juventude' (JMJ), reunindo milhões de jovens pelo mundo. Sua frase marcante foi: 'Vós sois a esperança da Igreja'." }
+    ]
+  },
+  {
+    "nome": "Santo Antônio de Pádua", "emoji": "🍞", "data": "13 de Junho",
+    "categorias": ["Doutor da Igreja", "Portugal", "Franciscano"],
+    "bio": [
+      { "titulo": "O Grande Pregador", "texto": "Nascido em Lisboa, Portugal, em 1195, tornou-se frade franciscano. Foi enviado à Itália, onde seu dom da pregação o tornou lendário. Multidões se reuniam para ouvi-lo." },
+      { "titulo": "Milagres", "texto": "É um dos santos mais populares do mundo, conhecido pelos 'pãezinhos de Santo Antônio' (caridade aos pobres) e por sua imensa sabedoria teológica. Faleceu aos 36 anos." }
+    ]
+  }
+]

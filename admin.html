@@ -1,0 +1,886 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Painel da Comissão — Jovens Luz do Mundo</title>
+    <link rel="stylesheet" href="css/style.css" />
+    <link rel="icon" type="image/svg+xml" href="img/gemini-svg.svg" />
+    <style>
+        body {
+            padding-bottom: 40px;
+        }
+
+        /* ===== LOGIN ===== */
+        .login-screen {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 24px;
+            background: linear-gradient(160deg, var(--azul-royal-escuro) 0%, var(--azul-royal) 60%, var(--azul-royal-claro) 100%);
+        }
+
+        .login-logo {
+            margin-bottom: 24px;
+        }
+
+        .login-box {
+            background: #fff;
+            border-radius: 20px;
+            padding: 28px 24px;
+            width: 100%;
+            max-width: 360px;
+            box-shadow: 0 8px 40px rgba(0, 0, 0, 0.18);
+        }
+
+        .login-box h2 {
+            font-family: var(--fonte-titulo);
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--azul-royal);
+            margin-bottom: 4px;
+            text-align: center;
+        }
+
+        .login-box p {
+            font-size: 13px;
+            color: var(--cinza-texto);
+            text-align: center;
+            margin-bottom: 24px;
+        }
+
+        .login-campo {
+            width: 100%;
+            padding: 12px 14px;
+            border: 1.5px solid var(--cinza-suave);
+            border-radius: var(--raio-sm);
+            font-size: 14px;
+            font-family: var(--fonte-corpo);
+            color: var(--texto-escuro);
+            outline: none;
+            transition: var(--transicao);
+            margin-bottom: 12px;
+            display: block;
+        }
+
+        .login-campo:focus {
+            border-color: var(--azul-royal);
+        }
+
+        .login-btn {
+            width: 100%;
+            padding: 14px;
+            background: var(--azul-royal);
+            color: #fff;
+            border: none;
+            border-radius: var(--raio-sm);
+            font-family: var(--fonte-titulo);
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transicao);
+            letter-spacing: 0.04em;
+        }
+
+        .login-btn:hover {
+            background: var(--azul-royal-escuro);
+        }
+
+        .login-erro {
+            background: rgba(232, 97, 122, 0.10);
+            border: 1px solid var(--rosa-coral-claro);
+            border-radius: 8px;
+            padding: 10px 14px;
+            font-size: 12px;
+            color: var(--rosa-coral-escuro);
+            margin-top: 10px;
+            display: none;
+        }
+
+        /* ===== ADMIN HEADER ===== */
+        .admin-header {
+            background: linear-gradient(135deg, var(--azul-royal-escuro), var(--azul-royal));
+            padding: 16px 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .admin-header h1 {
+            font-family: var(--fonte-titulo);
+            font-size: 17px;
+            font-weight: 700;
+            color: #fff;
+        }
+
+        .admin-header p {
+            font-size: 11px;
+            color: var(--dourado-claro);
+            margin-top: 2px;
+        }
+
+        .btn-sair {
+            background: rgba(255, 255, 255, 0.15);
+            border: none;
+            border-radius: 8px;
+            padding: 7px 14px;
+            font-family: var(--fonte-titulo);
+            font-size: 12px;
+            font-weight: 600;
+            color: #fff;
+            cursor: pointer;
+            transition: var(--transicao);
+        }
+
+        .btn-sair:hover {
+            background: rgba(255, 255, 255, 0.25);
+        }
+
+        /* ===== TABS ===== */
+        .admin-tabs {
+            display: flex;
+            background: var(--branco-puro);
+            border-bottom: 1px solid var(--cinza-suave);
+        }
+
+        .admin-tab {
+            flex: 1;
+            padding: 14px 8px;
+            text-align: center;
+            font-family: var(--fonte-titulo);
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--cinza-texto);
+            cursor: pointer;
+            border-bottom: 2px solid transparent;
+            transition: var(--transicao);
+        }
+
+        .admin-tab.ativo {
+            color: var(--azul-royal);
+            border-bottom-color: var(--azul-royal);
+        }
+
+        .admin-tab-content {
+            display: none;
+        }
+
+        .admin-tab-content.ativo {
+            display: block;
+        }
+
+        /* ===== FORMULÁRIOS ADMIN ===== */
+        .admin-form {
+            background: var(--branco-puro);
+            margin: 16px;
+            border-radius: var(--raio);
+            padding: 20px;
+            box-shadow: var(--sombra);
+        }
+
+        .admin-form h3 {
+            font-family: var(--fonte-titulo);
+            font-size: 15px;
+            font-weight: 700;
+            color: var(--azul-royal);
+            margin-bottom: 16px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid var(--cinza-suave);
+        }
+
+        .campo-label {
+            display: block;
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 0.08em;
+            color: var(--azul-royal);
+            text-transform: uppercase;
+            margin-bottom: 6px;
+        }
+
+        .campo-input {
+            width: 100%;
+            padding: 11px 13px;
+            border: 1.5px solid var(--cinza-suave);
+            border-radius: var(--raio-sm);
+            font-size: 14px;
+            font-family: var(--fonte-corpo);
+            color: var(--texto-escuro);
+            outline: none;
+            transition: var(--transicao);
+            margin-bottom: 14px;
+            display: block;
+            background: var(--branco-puro);
+        }
+
+        .campo-input:focus {
+            border-color: var(--azul-royal);
+        }
+
+        select.campo-input {
+            cursor: pointer;
+        }
+
+        textarea.campo-input {
+            resize: vertical;
+            min-height: 90px;
+            line-height: 1.6;
+        }
+
+        .campos-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+
+        .btn-salvar {
+            width: 100%;
+            padding: 14px;
+            background: var(--azul-royal);
+            color: #fff;
+            border: none;
+            border-radius: var(--raio-sm);
+            font-family: var(--fonte-titulo);
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transicao);
+            letter-spacing: 0.04em;
+            margin-top: 4px;
+        }
+
+        .btn-salvar:hover {
+            background: var(--azul-royal-escuro);
+        }
+
+        .btn-salvar:disabled {
+            opacity: 0.5;
+            cursor: default;
+        }
+
+        /* Urgente toggle */
+        .toggle-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 10px 13px;
+            background: var(--cinza-suave);
+            border-radius: var(--raio-sm);
+            margin-bottom: 14px;
+        }
+
+        .toggle-row span {
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--texto-escuro);
+        }
+
+        .toggle-row small {
+            font-size: 11px;
+            color: var(--cinza-texto);
+            display: block;
+        }
+
+        .toggle-wrap {
+            position: relative;
+            width: 42px;
+            height: 22px;
+        }
+
+        .toggle-wrap input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .toggle-slider {
+            position: absolute;
+            inset: 0;
+            background: #ccc;
+            border-radius: 11px;
+            transition: var(--transicao);
+            cursor: pointer;
+        }
+
+        .toggle-slider::before {
+            content: '';
+            position: absolute;
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            background: #fff;
+            top: 3px;
+            left: 3px;
+            transition: var(--transicao);
+        }
+
+        .toggle-wrap input:checked+.toggle-slider {
+            background: var(--rosa-coral);
+        }
+
+        .toggle-wrap input:checked+.toggle-slider::before {
+            transform: translateX(20px);
+        }
+
+        /* ===== LISTA ADMIN ===== */
+        .admin-lista {
+            margin: 0 16px 16px;
+        }
+
+        .admin-lista h3 {
+            font-family: var(--fonte-titulo);
+            font-size: 13px;
+            font-weight: 700;
+            letter-spacing: 0.08em;
+            color: var(--cinza-texto);
+            text-transform: uppercase;
+            margin-bottom: 10px;
+            margin-top: 20px;
+        }
+
+        .admin-item {
+            background: var(--branco-puro);
+            border-radius: var(--raio-sm);
+            padding: 14px;
+            margin-bottom: 10px;
+            box-shadow: var(--sombra);
+            display: flex;
+            gap: 12px;
+            align-items: flex-start;
+        }
+
+        .admin-item-info {
+            flex: 1;
+        }
+
+        .admin-item-titulo {
+            font-family: var(--fonte-titulo);
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--texto-escuro);
+            margin-bottom: 3px;
+        }
+
+        .admin-item-sub {
+            font-size: 12px;
+            color: var(--cinza-texto);
+            line-height: 1.5;
+        }
+
+        .btn-excluir {
+            background: rgba(232, 97, 122, 0.10);
+            border: none;
+            border-radius: 8px;
+            width: 34px;
+            height: 34px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: var(--transicao);
+            flex-shrink: 0;
+        }
+
+        .btn-excluir:hover {
+            background: rgba(232, 97, 122, 0.25);
+        }
+
+        /* ===== TOAST ===== */
+        .toast {
+            position: fixed;
+            bottom: 24px;
+            left: 50%;
+            transform: translateX(-50%) translateY(20px);
+            background: var(--texto-escuro);
+            color: #fff;
+            padding: 11px 20px;
+            border-radius: 30px;
+            font-size: 13px;
+            font-weight: 600;
+            opacity: 0;
+            transition: all 0.3s ease;
+            pointer-events: none;
+            white-space: nowrap;
+            z-index: 999;
+        }
+
+        .toast.show {
+            opacity: 1;
+            transform: translateX(-50%) translateY(0);
+        }
+
+        /* ===== BADGE ===== */
+        .badge-urgente {
+            display: inline-block;
+            background: var(--rosa-coral);
+            color: #fff;
+            font-size: 10px;
+            font-weight: 700;
+            padding: 2px 7px;
+            border-radius: 10px;
+            margin-left: 6px;
+            vertical-align: middle;
+        }
+
+        .badge-cat {
+            display: inline-block;
+            background: rgba(27, 79, 155, 0.10);
+            color: var(--azul-royal);
+            font-size: 10px;
+            font-weight: 700;
+            padding: 2px 7px;
+            border-radius: 10px;
+            margin-left: 4px;
+        }
+
+        .vazio-admin {
+            text-align: center;
+            padding: 30px 16px;
+            color: var(--cinza-texto);
+            font-size: 13px;
+        }
+
+        .loading-txt {
+            text-align: center;
+            padding: 20px;
+            color: var(--cinza-texto);
+            font-size: 13px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- ===== TELA DE LOGIN ===== -->
+    <div id="tela-login" class="login-screen">
+        <div class="login-logo">
+            <svg width="60" height="60" viewBox="0 0 100 100" fill="none">
+                <line x1="50" y1="8" x2="50" y2="18" stroke="#C9A84C" stroke-width="2.2" stroke-linecap="round" />
+                <line x1="50" y1="82" x2="50" y2="92" stroke="#C9A84C" stroke-width="2.2" stroke-linecap="round" />
+                <line x1="8" y1="50" x2="18" y2="50" stroke="#C9A84C" stroke-width="2.2" stroke-linecap="round" />
+                <line x1="82" y1="50" x2="92" y2="50" stroke="#C9A84C" stroke-width="2.2" stroke-linecap="round" />
+                <line x1="19" y1="19" x2="26" y2="26" stroke="#C9A84C" stroke-width="2" stroke-linecap="round" />
+                <line x1="74" y1="74" x2="81" y2="81" stroke="#C9A84C" stroke-width="2" stroke-linecap="round" />
+                <line x1="81" y1="19" x2="74" y2="26" stroke="#C9A84C" stroke-width="2" stroke-linecap="round" />
+                <line x1="19" y1="81" x2="26" y2="74" stroke="#C9A84C" stroke-width="2" stroke-linecap="round" />
+                <line x1="34" y1="11" x2="36" y2="20" stroke="#C9A84C" stroke-width="1.6" stroke-linecap="round" />
+                <line x1="66" y1="11" x2="64" y2="20" stroke="#C9A84C" stroke-width="1.6" stroke-linecap="round" />
+                <line x1="11" y1="34" x2="20" y2="36" stroke="#C9A84C" stroke-width="1.6" stroke-linecap="round" />
+                <line x1="89" y1="34" x2="80" y2="36" stroke="#C9A84C" stroke-width="1.6" stroke-linecap="round" />
+                <rect x="42" y="22" width="16" height="56" fill="#C9A84C" />
+                <rect x="24" y="37" width="52" height="16" fill="#C9A84C" />
+            </svg>
+        </div>
+        <div class="login-box">
+            <h2>Painel da Comissão</h2>
+            <p>Jovens Luz do Mundo · Acesso restrito</p>
+            <input type="email" id="login-email" class="login-campo" placeholder="E-mail da comissão" />
+            <input type="password" id="login-senha" class="login-campo" placeholder="Senha" />
+            <button class="login-btn" onclick="fazerLogin()">Entrar</button>
+            <div class="login-erro" id="login-erro"></div>
+        </div>
+    </div>
+
+    <!-- ===== PAINEL ADMIN ===== -->
+    <div id="tela-admin" style="display:none;">
+
+        <div class="admin-header">
+            <div>
+                <h1>Painel da Comissão</h1>
+                <p id="admin-email-txt">Bem-vindo!</p>
+            </div>
+            <button class="btn-sair" onclick="fazerLogout()">Sair</button>
+        </div>
+
+        <div class="admin-tabs">
+            <div class="admin-tab ativo" onclick="trocarTab('eventos')">📅 Eventos</div>
+            <div class="admin-tab" onclick="trocarTab('avisos')">🔔 Avisos</div>
+        </div>
+
+        <!-- ===== ABA EVENTOS ===== -->
+        <div id="tab-eventos" class="admin-tab-content ativo">
+
+            <div class="admin-form">
+                <h3>➕ Novo Evento</h3>
+
+                <label class="campo-label">Título do evento</label>
+                <input type="text" id="ev-titulo" class="campo-input" placeholder="Ex: Encontro de Jovens"
+                    maxlength="80" />
+
+                <label class="campo-label">Descrição</label>
+                <textarea id="ev-descricao" class="campo-input"
+                    placeholder="Descreva o evento, o que vai acontecer, quem pode participar..."></textarea>
+
+                <div class="campos-row">
+                    <div>
+                        <label class="campo-label">Data</label>
+                        <input type="date" id="ev-data" class="campo-input" />
+                    </div>
+                    <div>
+                        <label class="campo-label">Horário</label>
+                        <input type="time" id="ev-hora" class="campo-input" />
+                    </div>
+                </div>
+
+                <label class="campo-label">Local</label>
+                <input type="text" id="ev-local" class="campo-input"
+                    placeholder="Ex: Salão Paroquial, Igreja Principal..." maxlength="80" />
+
+                <label class="campo-label">Categoria</label>
+                <select id="ev-categoria" class="campo-input">
+                    <option value="encontro">Encontro de Jovens</option>
+                    <option value="missa">Missa</option>
+                    <option value="retiro">Retiro Espiritual</option>
+                    <option value="formacao">Formação</option>
+                    <option value="servico">Serviço / Missão</option>
+                    <option value="festivo">Festivo / Celebração</option>
+                    <option value="outro">Outro</option>
+                </select>
+
+                <div class="toggle-row">
+                    <div>
+                        <span>Evento em destaque</span>
+                        <small>Aparece fixado no topo da lista</small>
+                    </div>
+                    <label class="toggle-wrap">
+                        <input type="checkbox" id="ev-destaque">
+                        <span class="toggle-slider"></span>
+                    </label>
+                </div>
+
+                <button class="btn-salvar" id="btn-salvar-ev" onclick="salvarEvento()">
+                    Publicar Evento
+                </button>
+            </div>
+
+            <div class="admin-lista">
+                <h3>Eventos publicados</h3>
+                <div id="lista-ev-admin">
+                    <div class="loading-txt">Carregando...</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ===== ABA AVISOS ===== -->
+        <div id="tab-avisos" class="admin-tab-content">
+
+            <div class="admin-form">
+                <h3>➕ Novo Aviso</h3>
+
+                <label class="campo-label">Título do aviso</label>
+                <input type="text" id="av-titulo" class="campo-input" placeholder="Ex: Mudança no horário da missa"
+                    maxlength="80" />
+
+                <label class="campo-label">Texto do aviso</label>
+                <textarea id="av-texto" class="campo-input" placeholder="Escreva o aviso completo aqui..."
+                    style="min-height:110px;"></textarea>
+
+                <label class="campo-label">Autor (nome na comissão)</label>
+                <input type="text" id="av-autor" class="campo-input" placeholder="Ex: Comissão de Jovens"
+                    maxlength="50" />
+
+                <label class="campo-label">Categoria</label>
+                <select id="av-categoria" class="campo-input">
+                    <option value="geral">Geral</option>
+                    <option value="liturgia">Liturgia</option>
+                    <option value="formacao">Formação</option>
+                    <option value="servico">Serviço</option>
+                    <option value="financeiro">Financeiro</option>
+                    <option value="comunicado">Comunicado</option>
+                </select>
+
+                <div class="toggle-row">
+                    <div>
+                        <span>Aviso urgente</span>
+                        <small>Aparece destacado em vermelho no topo</small>
+                    </div>
+                    <label class="toggle-wrap">
+                        <input type="checkbox" id="av-urgente">
+                        <span class="toggle-slider"></span>
+                    </label>
+                </div>
+
+                <button class="btn-salvar" id="btn-salvar-av" onclick="salvarAviso()">
+                    Publicar Aviso
+                </button>
+            </div>
+
+            <div class="admin-lista">
+                <h3>Avisos publicados</h3>
+                <div id="lista-av-admin">
+                    <div class="loading-txt">Carregando...</div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Toast -->
+    <div class="toast" id="toast"></div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+        import { getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged }
+            from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+        import {
+            getFirestore, collection, addDoc, getDocs, deleteDoc, doc,
+            orderBy, query, serverTimestamp, Timestamp
+        }
+            from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyCBXlGzF46hAmVpm7mJ0EEKr6y2-woIClo",
+            authDomain: "jovens-luz-do-mundo-608cd.firebaseapp.com",
+            projectId: "jovens-luz-do-mundo-608cd",
+            storageBucket: "jovens-luz-do-mundo-608cd.firebasestorage.app",
+            messagingSenderId: "519874530522",
+            appId: "1:519874530522:web:50adce994ab335fc6829e3"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+
+        // ===== AUTH =====
+        onAuthStateChanged(auth, user => {
+            if (user) {
+                document.getElementById('tela-login').style.display = 'none';
+                document.getElementById('tela-admin').style.display = 'block';
+                document.getElementById('admin-email-txt').textContent = user.email;
+                carregarEventos();
+                carregarAvisos();
+            } else {
+                document.getElementById('tela-login').style.display = 'flex';
+                document.getElementById('tela-admin').style.display = 'none';
+            }
+        });
+
+        window.fazerLogin = async function () {
+            const email = document.getElementById('login-email').value.trim();
+            const senha = document.getElementById('login-senha').value;
+            const erro = document.getElementById('login-erro');
+            erro.style.display = 'none';
+            try {
+                await signInWithEmailAndPassword(auth, email, senha);
+            } catch (e) {
+                erro.style.display = 'block';
+                erro.textContent = 'E-mail ou senha incorretos. Tente novamente.';
+            }
+        };
+
+        window.fazerLogout = async function () {
+            await signOut(auth);
+        };
+
+        // ===== TABS =====
+        window.trocarTab = function (tab) {
+            document.querySelectorAll('.admin-tab').forEach((t, i) => {
+                t.classList.toggle('ativo', ['eventos', 'avisos'][i] === tab);
+            });
+            document.querySelectorAll('.admin-tab-content').forEach(c => c.classList.remove('ativo'));
+            document.getElementById('tab-' + tab).classList.add('ativo');
+        };
+
+        // ===== TOAST =====
+        window.toast = function (msg) {
+            const t = document.getElementById('toast');
+            t.textContent = msg;
+            t.classList.add('show');
+            setTimeout(() => t.classList.remove('show'), 2800);
+        };
+
+        // ===== FORMATADORES =====
+        const categoriasEv = {
+            encontro: 'Encontro', missa: 'Missa', retiro: 'Retiro',
+            formacao: 'Formação', servico: 'Serviço', festivo: 'Festivo', outro: 'Outro'
+        };
+        const categoriasAv = {
+            geral: 'Geral', liturgia: 'Liturgia', formacao: 'Formação',
+            servico: 'Serviço', financeiro: 'Financeiro', comunicado: 'Comunicado'
+        };
+
+        function formatarData(str) {
+            if (!str) return '';
+            const [a, m, d] = str.split('-');
+            const meses = ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'];
+            return `${d} de ${meses[parseInt(m) - 1]} de ${a}`;
+        }
+
+        // ===== EVENTOS =====
+        window.salvarEvento = async function () {
+            const titulo = document.getElementById('ev-titulo').value.trim();
+            const descricao = document.getElementById('ev-descricao').value.trim();
+            const data = document.getElementById('ev-data').value;
+            const hora = document.getElementById('ev-hora').value;
+            const local = document.getElementById('ev-local').value.trim();
+            const categoria = document.getElementById('ev-categoria').value;
+            const destaque = document.getElementById('ev-destaque').checked;
+
+            if (!titulo || !data || !local) {
+                toast('⚠️ Preencha título, data e local.');
+                return;
+            }
+
+            const btn = document.getElementById('btn-salvar-ev');
+            btn.disabled = true; btn.textContent = 'Publicando...';
+
+            try {
+                await addDoc(collection(db, 'eventos'), {
+                    titulo, descricao, data, hora, local, categoria, destaque,
+                    criadoEm: serverTimestamp(),
+                    criadoPor: auth.currentUser?.email || 'comissão'
+                });
+                toast('✓ Evento publicado com sucesso!');
+                // Limpar form
+                ['ev-titulo', 'ev-descricao', 'ev-data', 'ev-hora', 'ev-local'].forEach(id => {
+                    document.getElementById(id).value = '';
+                });
+                document.getElementById('ev-destaque').checked = false;
+                carregarEventos();
+            } catch (e) {
+                toast('❌ Erro ao publicar. Tente novamente.');
+            }
+            btn.disabled = false; btn.textContent = 'Publicar Evento';
+        };
+
+        async function carregarEventos() {
+            const lista = document.getElementById('lista-ev-admin');
+            lista.innerHTML = '<div class="loading-txt">Carregando...</div>';
+            try {
+                const q = query(collection(db, 'eventos'), orderBy('criadoEm', 'desc'));
+                const snap = await getDocs(q);
+                if (snap.empty) {
+                    lista.innerHTML = '<div class="vazio-admin">Nenhum evento publicado ainda.</div>';
+                    return;
+                }
+                lista.innerHTML = '';
+                snap.forEach(docSnap => {
+                    const ev = docSnap.data();
+                    const el = document.createElement('div');
+                    el.className = 'admin-item';
+                    el.innerHTML = `
+          <div class="admin-item-info">
+            <div class="admin-item-titulo">
+              ${ev.titulo}
+              ${ev.destaque ? '<span class="badge-urgente">Destaque</span>' : ''}
+              <span class="badge-cat">${categoriasEv[ev.categoria] || ev.categoria}</span>
+            </div>
+            <div class="admin-item-sub">
+              📅 ${formatarData(ev.data)} ${ev.hora ? '· ' + ev.hora : ''}<br>
+              📍 ${ev.local}
+            </div>
+          </div>
+          <button class="btn-excluir" onclick="excluirEvento('${docSnap.id}')" title="Excluir">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#E8617A" stroke-width="2" stroke-linecap="round">
+              <polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4h6v2"/>
+            </svg>
+          </button>`;
+                    lista.appendChild(el);
+                });
+            } catch (e) {
+                lista.innerHTML = '<div class="vazio-admin">Erro ao carregar eventos.</div>';
+            }
+        }
+
+        window.excluirEvento = async function (id) {
+            if (!confirm('Excluir este evento?')) return;
+            try {
+                await deleteDoc(doc(db, 'eventos', id));
+                toast('Evento excluído.');
+                carregarEventos();
+            } catch { toast('❌ Erro ao excluir.'); }
+        };
+
+        // ===== AVISOS =====
+        window.salvarAviso = async function () {
+            const titulo = document.getElementById('av-titulo').value.trim();
+            const texto = document.getElementById('av-texto').value.trim();
+            const autor = document.getElementById('av-autor').value.trim() || 'Comissão';
+            const categoria = document.getElementById('av-categoria').value;
+            const urgente = document.getElementById('av-urgente').checked;
+
+            if (!titulo || !texto) {
+                toast('⚠️ Preencha título e texto do aviso.');
+                return;
+            }
+
+            const btn = document.getElementById('btn-salvar-av');
+            btn.disabled = true; btn.textContent = 'Publicando...';
+
+            try {
+                await addDoc(collection(db, 'avisos'), {
+                    titulo, texto, autor, categoria, urgente,
+                    criadoEm: serverTimestamp(),
+                });
+                toast('✓ Aviso publicado!');
+                ['av-titulo', 'av-texto', 'av-autor'].forEach(id => {
+                    document.getElementById(id).value = '';
+                });
+                document.getElementById('av-urgente').checked = false;
+                carregarAvisos();
+            } catch (e) {
+                toast('❌ Erro ao publicar. Tente novamente.');
+            }
+            btn.disabled = false; btn.textContent = 'Publicar Aviso';
+        };
+
+        async function carregarAvisos() {
+            const lista = document.getElementById('lista-av-admin');
+            lista.innerHTML = '<div class="loading-txt">Carregando...</div>';
+            try {
+                const q = query(collection(db, 'avisos'), orderBy('criadoEm', 'desc'));
+                const snap = await getDocs(q);
+                if (snap.empty) {
+                    lista.innerHTML = '<div class="vazio-admin">Nenhum aviso publicado ainda.</div>';
+                    return;
+                }
+                lista.innerHTML = '';
+                snap.forEach(docSnap => {
+                    const av = docSnap.data();
+                    const data = av.criadoEm?.toDate?.()?.toLocaleDateString('pt-BR') || '—';
+                    const el = document.createElement('div');
+                    el.className = 'admin-item';
+                    el.innerHTML = `
+          <div class="admin-item-info">
+            <div class="admin-item-titulo">
+              ${av.titulo}
+              ${av.urgente ? '<span class="badge-urgente">Urgente</span>' : ''}
+              <span class="badge-cat">${categoriasAv[av.categoria] || av.categoria}</span>
+            </div>
+            <div class="admin-item-sub">
+              ✍️ ${av.autor} · ${data}<br>
+              ${av.texto.substring(0, 80)}${av.texto.length > 80 ? '...' : ''}
+            </div>
+          </div>
+          <button class="btn-excluir" onclick="excluirAviso('${docSnap.id}')" title="Excluir">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#E8617A" stroke-width="2" stroke-linecap="round">
+              <polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4h6v2"/>
+            </svg>
+          </button>`;
+                    lista.appendChild(el);
+                });
+            } catch (e) {
+                lista.innerHTML = '<div class="vazio-admin">Erro ao carregar avisos.</div>';
+            }
+        }
+
+        window.excluirAviso = async function (id) {
+            if (!confirm('Excluir este aviso?')) return;
+            try {
+                await deleteDoc(doc(db, 'avisos', id));
+                toast('Aviso excluído.');
+                carregarAvisos();
+            } catch { toast('❌ Erro ao excluir.'); }
+        };
+
+        // Enter no login
+        document.getElementById('login-senha').addEventListener('keydown', e => {
+            if (e.key === 'Enter') window.fazerLogin();
+        });
+    </script>
+</body>
+
+</html>
