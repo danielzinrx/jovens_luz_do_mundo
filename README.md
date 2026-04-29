@@ -224,18 +224,6 @@ O projeto pode ser instalado como aplicativo no celular sem precisar da App Stor
 
 ---
 
-## 🤝 Contribuindo
-
-Este projeto foi desenvolvido para o grupo jovem **Jovens Luz do Mundo**. Sugestões e melhorias são bem-vindas!
-
-1. Faça um fork do projeto
-2. Crie uma branch para sua feature (`git checkout -b feature/minha-feature`)
-3. Commit suas mudanças (`git commit -m 'feat: adiciona minha feature'`)
-4. Push para a branch (`git push origin feature/minha-feature`)
-5. Abra um Pull Request
-
----
-
 ## 📄 Licença
 
 Distribuído sob a licença MIT. Veja `LICENSE` para mais informações.
